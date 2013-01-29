@@ -27,7 +27,7 @@ Edit static HTML pages ( text content and HTML code ) with this simple InPlaceEd
 
 **before starting the server node.js dependencies (conect & express) shold be installed**
 
-`node i`
+`npm i`
 
 **now local server can be started**
 
