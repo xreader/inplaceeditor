@@ -126,7 +126,7 @@ $(document).ready(function(){
     }
 
     var addControls = function () {
-		var controlsCss = ' style=" top: 10px; position: absolute; right: 18px; "';
+		var controlsCss = ' style=" top: 50px; position: absolute; right: 18px; "';
         $('body').append('<div class="editorControls" ' + controlsCss + '><button id="saveBtn" class="btn" >Save</button><button id="actionCopy" class="btn" >Copy</button> </div></div>');
         $('#saveBtn').click(function () {
             console.log("do save...");
