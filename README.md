@@ -43,7 +43,7 @@ HTML elements are highlited on mouse over
 
 Click on the highligted area to start text eding.
 
-With DoubleClick you can edit HTML code
+Double click to edit HTML code
 
 
 To finish editing element click anywhere else or press ESC
