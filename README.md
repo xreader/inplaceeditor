@@ -21,7 +21,7 @@ Edit static HTML pages ( text content and HTML code ) with this simple InPlaceEd
 `rm -rf inplaceeditor`
 
 
-**add inplaceeditor to HTML template before `</body>`**
+**add inplaceeditor to index.html template before `</body>`**
 
 `<script src="js/inplaceeditor.js"></script>`
 
