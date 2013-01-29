@@ -9,7 +9,8 @@ Edit static HTML pages with simple InPlaceEditor
 **getting html5 boilerplate bootstrap template**
 
 `git clone https://github.com/verekia/initializr-bootstrap.git`
-`<code>cd initializr-bootstrap`
+
+`cd initializr-bootstrap`
 
 **getting inplace editor**
 
