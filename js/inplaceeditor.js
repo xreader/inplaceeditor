@@ -118,7 +118,7 @@ $(document).ready(function(){
         if ($("script[src*='beautify-html.js']").length == 0)
             $('body').append('<script src="https://raw.github.com/einars/js-beautify/master/beautify-html.js"/>');
 
-        $("<style type='text/css'> .editablearea { border:1px solid; } </style>").appendTo("head");
+        $("<style type='text/css'> .editablearea { outline:1px; } </style>").appendTo("head");
     }
 
     var addControls = function () {
