@@ -36,7 +36,6 @@ $(document).ready(function(){
 
 
 	$(document).click(function (event) {
-//		console.log("editing :" + $(event.target).html());
 		if ( !isEditable( event.target ) ) return true;
         if ( $(event.target).is('[contentEditable]') ) return false;
         if ( $(event.target).parents('[contentEditable]' ).length != 0 ) return false;
@@ -98,11 +97,13 @@ $(document).ready(function(){
 		console.log("stop editing....");
 		$(current).removeAttr('contentEditable');
         $(current).parents().removeAttr('contentEditable');
-//        content = clearPrettyPrintFormatting( current );
-		var content =  EDITING_MODE == TEXT_MODE ? $(current).text() : EDITING_MODE == ADVANCED_HTML_MODE ? clearPrettyPrintFormatting( current ) : $(current).html();
-//        if( EDITING_MODE == ADVANCED_HTML_MODE ) {
-//            content = clearPrettyPrintFormatting( current );
-//        }
+		var content =  EDITING_MODE == TEXT_MODE
+            ? $(current).text() : EDITING_MODE == ADVANCED_HTML_MODE
+                    ? clearPrettyPrintFormatting( current ) : $(current).html();
+        if( EDITING_MODE == HTML_MODE || EDITING_MODE == ADVANCED_HTML_MODE ) {
+			content = content.split('&lt;').join('<');
+			content = content.split('&gt;').join('>');
+		}
 		if( EDITING_MODE == HTML_MODE || EDITING_MODE == ADVANCED_HTML_MODE ) {
 			content = content.split('&lt;').join('<');
 			content = content.split('&gt;').join('>');
@@ -121,8 +122,7 @@ $(document).ready(function(){
             $('body').append('<script src="http://twitter.github.com/bootstrap/assets/js/google-code-prettify/prettify.js"/>');
         if ($("script[src*='beautify-html.js']").length == 0)
             $('body').append('<script src="https://raw.github.com/einars/js-beautify/master/beautify-html.js"/>');
-
-        $("<style type='text/css'> .editablearea { outline:1px; } </style>").appendTo("head");
+        $("<style type='text/css'> .editablearea { box-shadow: 0 0 10px hsl(212, 80%, 50%); outline: 1px solid hsla(206, 77%, 61%, 0.3); } </style>").appendTo("head");
     }
 
     var addControls = function () {
