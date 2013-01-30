@@ -36,7 +36,6 @@ $(document).ready(function(){
 
 
 	$(document).click(function (event) {
-//		console.log("editing :" + $(event.target).html());
 		if ( !isEditable( event.target ) ) return true;
         if ( $(event.target).is('[contentEditable]') ) return false;
         if ( $(event.target).parents('[contentEditable]' ).length != 0 ) return false;
@@ -50,7 +49,7 @@ $(document).ready(function(){
 		stopHighlighting(event.target);
 	});
 
-    function stripX(str){
+    function stripX(str) {
         str = style_html(str);
         return str.replace(/\&(?!(\w+;))/g, '&amp;').replace(/</g, '&lt;');
     }
@@ -98,16 +97,13 @@ $(document).ready(function(){
 		console.log("stop editing....");
 		$(current).removeAttr('contentEditable');
         $(current).parents().removeAttr('contentEditable');
-//        content = clearPrettyPrintFormatting( current );
-		var content =  EDITING_MODE == TEXT_MODE ? $(current).text() : EDITING_MODE == ADVANCED_HTML_MODE ? clearPrettyPrintFormatting( current ) : $(current).html();
-//        if( EDITING_MODE == ADVANCED_HTML_MODE ) {
-//            content = clearPrettyPrintFormatting( current );
-//        }
-		if( EDITING_MODE == HTML_MODE || EDITING_MODE == ADVANCED_HTML_MODE ) {
+		var content =  EDITING_MODE == TEXT_MODE
+            ? $(current).text() : EDITING_MODE == ADVANCED_HTML_MODE
+                    ? clearPrettyPrintFormatting( current ) : $(current).html();
+        if( EDITING_MODE == HTML_MODE || EDITING_MODE == ADVANCED_HTML_MODE ) {
 			content = content.split('&lt;').join('<');
 			content = content.split('&gt;').join('>');
 		}
-		console.log("new value:" + content);
 		$(current).html(content);
 		highlighting = true;
 		EDITING_MODE = NONE_MODE;
