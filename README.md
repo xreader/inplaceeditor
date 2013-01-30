@@ -1,7 +1,7 @@
-inplaceeditor
+InPlaceEditor
 =============
 
-Edit static HTML pages with simple InPlaceEditor
+Edit static HTML pages ( text content and HTML code ) with this simple InPlaceEditor
 ------------------------------------------------
 
 **Usage example**
@@ -9,7 +9,8 @@ Edit static HTML pages with simple InPlaceEditor
 **getting html5 boilerplate bootstrap template**
 
 `git clone https://github.com/verekia/initializr-bootstrap.git`
-`<code>cd initializr-bootstrap`
+
+`cd initializr-bootstrap`
 
 **getting inplace editor**
 
@@ -20,13 +21,13 @@ Edit static HTML pages with simple InPlaceEditor
 `rm -rf inplaceeditor`
 
 
-**add inplaceeditor to HTML template before `</body>`**
+**add inplaceeditor to index.html template before `</body>`**
 
 `<script src="js/inplaceeditor.js"></script>`
 
 **before starting the server node.js dependencies (conect & express) shold be installed**
 
-`node i`
+`npm i`
 
 **now local server can be started**
 
@@ -43,7 +44,7 @@ HTML elements are highlited on mouse over
 
 Click on the highligted area to start text eding.
 
-With DoubleClick you can edit HTML code
+Double click to edit HTML code
 
 
 To finish editing element click anywhere else or press ESC
