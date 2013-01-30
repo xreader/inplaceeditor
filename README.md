@@ -1,4 +1,4 @@
-inplaceeditor
+InPlaceEditor
 =============
 
 Edit static HTML pages ( text content and HTML code ) with this simple InPlaceEditor
