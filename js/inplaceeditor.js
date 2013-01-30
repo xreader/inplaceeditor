@@ -49,7 +49,7 @@ $(document).ready(function(){
 		stopHighlighting(event.target);
 	});
 
-    function stripX(str) {
+    function stripX(str){
         str = style_html(str);
         return str.replace(/\&(?!(\w+;))/g, '&amp;').replace(/</g, '&lt;');
     }
@@ -104,6 +104,11 @@ $(document).ready(function(){
 			content = content.split('&lt;').join('<');
 			content = content.split('&gt;').join('>');
 		}
+		if( EDITING_MODE == HTML_MODE || EDITING_MODE == ADVANCED_HTML_MODE ) {
+			content = content.split('&lt;').join('<');
+			content = content.split('&gt;').join('>');
+		}
+		console.log("new value:" + content);
 		$(current).html(content);
 		highlighting = true;
 		EDITING_MODE = NONE_MODE;
@@ -117,13 +122,14 @@ $(document).ready(function(){
             $('body').append('<script src="http://twitter.github.com/bootstrap/assets/js/google-code-prettify/prettify.js"/>');
         if ($("script[src*='beautify-html.js']").length == 0)
             $('body').append('<script src="https://raw.github.com/einars/js-beautify/master/beautify-html.js"/>');
-
         $("<style type='text/css'> .editablearea { box-shadow: 0 0 10px hsl(212, 80%, 50%); outline: 1px solid hsla(206, 77%, 61%, 0.3); } </style>").appendTo("head");
     }
 
     var addControls = function () {
 		var controlsCss = ' style=" top: 50px; position: absolute; right: 18px; "';
         $('body').append('<div class="editorControls" ' + controlsCss + '><button id="saveBtn" class="btn" >Save</button><button id="actionCopy" class="btn" >Copy</button> </div></div>');
+	 controlsCss = ' style=" bottom: 20px; position: absolute; right: 18px; "';
+        $('body').append('<div class="editorControls" ' + controlsCss + '><a href="/logout">Logout</div>');
         $('#saveBtn').click(function () {
             console.log("do save...");
             saveChanges();
