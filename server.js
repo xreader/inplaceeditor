@@ -83,6 +83,7 @@ app.get('/login', function(req, res){
   res.render('login', { user: req.user, message: req.flash('error') });
 });
 
+/*
 app.get('/js/inplaceeditor.js', function (req, res) {
 	console.log("editor requested...");
 	if (req.isAuthenticated())
@@ -91,16 +92,24 @@ app.get('/js/inplaceeditor.js', function (req, res) {
 		res.sendfile("login.js", {root:"js"});		
 
 });
+*/
 
-app.post('/login', 
+app.post('/login',
   passport.authenticate('local', { failureRedirect: '/login', failureFlash: true }),
   function(req, res) {
     res.redirect('/demo.html');
-  });
+});
 
 app.get('/logout', function(req, res){
   req.logout();
   res.redirect('/demo.html');
+});
+
+app.get('/isloggedin', function(req, res){
+    if ( req.isAuthenticated() )
+        res.send("true");
+    else
+        res.send("false");
 });
 
 //save changes
