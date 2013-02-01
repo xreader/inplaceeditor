@@ -23,6 +23,12 @@ $(document).ready(function () {
     console.log("########## InPlaceEditor v.0.1 #######");
     console.log("########################################");
 
+    function InPlaceEditor() {
+        return InPlaceEditor;
+    }
+
+    window.InPlaceEditor = window.InPlaceEditor  || InPlaceEditor;
+
     var stopHighlighting = function (selector) {
         $(selector).removeClass('editablearea');
         highlighting = false;
@@ -43,12 +49,13 @@ $(document).ready(function () {
     /**
      * entering advanced mode
      */
-    function initMouesListeners () {
+    InPlaceEditor.initMouesListeners = function () {
         $(document).mouseout(function (event) {
             if (isEditable(event.target))
                 $(event.target).removeClass('editablearea');
         });
         $(document).mouseover(function (event) {
+            console.log("mouse overe MODE check:" + EDITING_MODE);
             if (highlighting && isEditable(event.target))
                 $(event.target).addClass('editablearea');
         });
@@ -57,7 +64,7 @@ $(document).ready(function () {
             if ($(event.target).is('[contentEditable]')) return false;
             if ($(event.target).parents('[contentEditable]').length != 0) return false;
             if (current && !$(event.target).is('[contentEditable]'))
-                stopEditing();
+                InPlaceEditor.stopEditing();
             if ($(event.target).children().length > 0) EDITING_MODE = HTML_MODE;
             else EDITING_MODE = TEXT_MODE;
             // activate edit mode
@@ -78,26 +85,30 @@ $(document).ready(function () {
         });
 
 
-        /*$(document).keyup(function (e) {
-            processKeyEvent(e.keyCode);
-        });*/
+        $(document).keyup(function (e) {
+            processKeyEvent(e);
+        });
 
-        document.onkeypress = processKeyEvent;
-        document.onkeyup = processKeyEvent;
+        $(document).keypress(function (e) {
+            processKeyEvent(e);
+        });
+
+        //document.onkeypress = processKeyEvent;
+        //document.onkeyup = processKeyEvent;
     }
 
     var processKeyEvent = function (e) {
         console.log("key:" + e.keyCode);
         if (e.keyCode == 27)
-            stopEditing();
+            InPlaceEditor.stopEditing();
         else if (e.keyCode == 37 || e.keyCode == 38 || e.keyCode == 39 || e.keyCode == 40) {
             //cursor exited the edited area
             if ($(window.getSelection().anchorNode).parents('[contentEditable]').length == 0)
-                stopEditing();
+                InPlaceEditor.stopEditing();
         } else if (e.keyCode == 13) {
             if (!e.shiftKey) {
-                console.log("enter not allowed");
-                alert("Use Shift+Enter for new line!!!")
+                e.preventDefault();
+                alert("Use Shift+Enter for new line!!!");
                 return false;
             }
         }
@@ -116,7 +127,7 @@ $(document).ready(function () {
         return content;
     };
 
-    var stopEditing = function () {
+    InPlaceEditor.stopEditing = function () {
         console.log("stop editing....");
         $(current).removeAttr('contentEditable');
         $(current).parents().removeAttr('contentEditable');
@@ -128,23 +139,28 @@ $(document).ready(function () {
             content = content.split('&gt;').join('>');
         }
         console.log("new value:" + content);
+        if ($(current).is('body') ) {
+            $(document).unbind('click');
+            $(document).unbind('dblclick');
+            $(document).unbind('mouseover');
+            $(document).unbind('mouseout');
+        }
         $(current).html(content);
         highlighting = true;
         EDITING_MODE = NONE_MODE;
         current = undefined;
     };
 
-    var appendServiceStylesAndDependencies = function () {
+    InPlaceEditor.appendServiceStylesAndDependencies = function () {
         if ($("link[href*='prettify.css']").length == 0)
             $('head').append('<link rel="stylesheet" href="http://twitter.github.com/bootstrap/assets/js/google-code-prettify/prettify.css" type="text/css" />');
         if ($("script[src*='prettify.js']").length == 0)
             $('body').append('<script src="http://twitter.github.com/bootstrap/assets/js/google-code-prettify/prettify.js"/>');
         if ($("script[src*='beautify-html.js']").length == 0)
             $('body').append('<script src="https://raw.github.com/einars/js-beautify/master/beautify-html.js"/>');
-        $("<style type='text/css'> .editablearea { box-shadow: 0 0 10px hsl(212, 80%, 50%); outline: 1px solid hsla(206, 77%, 61%, 0.3); } </style>").appendTo("head");
     }
 
-    function addControls() {
+    InPlaceEditor.addControls = function() {
         if ($('.editorControls').length > 0) $('.editorControls').remove();
         var controlsCss = ' style=" top: 50px; position: absolute; right: 18px; "';
         $('body').append('<div class="editorControls" ' + controlsCss + '><button id="saveBtn" class="btn" >Save</button><button id="actionCopy" class="btn" >Copy</button> </div></div>');
@@ -152,27 +168,33 @@ $(document).ready(function () {
         $('body').append('<div class="editorControls" ' + controlsCss + '><a href="' + logoutPath + '">Logout</div>');
         $('#saveBtn').click(function () {
             console.log("do save...");
-            saveChanges();
+            InPlaceEditor.saveChanges();
         });
         $('#actionCopy').click(function () {
             console.log("do copy...");
             duplicate();
         });
+        //add rollover style for highliting elements
+        $("<style type='text/css'> .editablearea { box-shadow: 0 0 10px hsl(212, 80%, 50%); outline: 1px solid hsla(206, 77%, 61%, 0.3); } </style>").appendTo("head");
     }
 
-    function startEditing() {
-        addControls();
-        initMouesListeners();
+    InPlaceEditor.startEditing = function() {
+        console.log("editing...." + EDITING_MODE);
+        InPlaceEditor.addControls();
+        InPlaceEditor.initMouesListeners();
         highlighting = true;
     }
 
     var initialize = function () {
+        console.log("initialize..." + window.InPlaceEditor);
+        if (!window.InPlaceEditor) InPlaceEditor = new InPlaceEditor();
+        InPlaceEditor.appendServiceStylesAndDependencies();
         if (SEVER == 'DEMO') {
-            startEditing()
+            InPlaceEditor.startEditing()
         } else {
             $.get(loginStatusPath, function (data) {
                 if ($.trim( data ) == 'true') {
-                    startEditing();
+                    InPlaceEditor.startEditing();
                 } else {
                     var controlsCss = ' style=" bottom: 20px; position: absolute; right: 18px; "';
                     $('body').append('<div class="editorControls" ' + controlsCss + '><a href="' + loginPath + '">Admin</div>');
@@ -182,13 +204,14 @@ $(document).ready(function () {
         }
     };
 
-    function removeControls() {
+    InPlaceEditor.removeControls = function() {
         $('.editorControls').remove();
     }
 
-    function clearDutyCode() {
+    InPlaceEditor.clearDutyCode = function() {
         $("[contentEditable]").removeAttr("contentEditable");
         $("[editablearea]").removeAttr("editablearea");
+        $("style:contains('.editablearea')").remove();
     }
 
     var getEntireHtml = function () {
@@ -203,7 +226,7 @@ $(document).ready(function () {
         return html;
     };
 
-    var duplicate = function () {
+    InPlaceEditor.duplicate = function () {
         var url = window.location.pathname;
         var filename = url.substring(url.lastIndexOf('/') + 1) || 'index.html';
         var target = window.prompt("Enter new name:", "");
@@ -221,11 +244,11 @@ $(document).ready(function () {
         }
     };
 
-    var saveChanges = function () {
+    InPlaceEditor.saveChanges = function () {
         var url = window.location.pathname;
         var filename = url.substring(url.lastIndexOf('/') + 1) || 'index.html';
-        //removeControls();
-        clearDutyCode();
+        InPlaceEditor.removeControls();
+        InPlaceEditor.clearDutyCode();
         var entireHtml = getEntireHtml();
         var data = {
             name:filename,
@@ -235,11 +258,10 @@ $(document).ready(function () {
             console.log("saved:" + data);
             initialize();
         }).error(function (err) {
-                console.log("error" + err);
-            });
+            console.log("error" + err);
+        });
     };
 
-    appendServiceStylesAndDependencies();
     initialize();
 });	
 
