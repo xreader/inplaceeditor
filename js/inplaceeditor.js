@@ -77,7 +77,11 @@ $(document).ready(function () {
         });
 
 
-        document.onkeypress = processKeyEvent;
+        /*$(document).keyup(function (e) {
+            processKeyEvent(e.keyCode);
+        });*/
+
+        document.onkeyup = processKeyEvent;
     }
 
     var processKeyEvent = function (e) {
@@ -91,7 +95,7 @@ $(document).ready(function () {
         } else if (e.keyCode == 13) {
             if (!e.shiftKey) {
                 console.log("enter not allowed");
-                alert("Please use Shift+Enter for new line!")
+                alert("Use Shift+Enter for new line!!!")
                 return false;
             }
         }
