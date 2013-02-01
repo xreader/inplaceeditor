@@ -227,6 +227,7 @@ $(document).ready(function () {
     };
 
     InPlaceEditor.duplicate = function () {
+        if ( SEVER == 'DEMO') return false;
         var url = window.location.pathname;
         var filename = url.substring(url.lastIndexOf('/') + 1) || 'index.html';
         var target = window.prompt("Enter new name:", "");
@@ -245,6 +246,7 @@ $(document).ready(function () {
     };
 
     InPlaceEditor.saveChanges = function () {
+        if ( SEVER == 'DEMO') return false;
         var url = window.location.pathname;
         var filename = url.substring(url.lastIndexOf('/') + 1) || 'index.html';
         InPlaceEditor.removeControls();
