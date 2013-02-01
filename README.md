@@ -32,9 +32,12 @@ An article (in russian) can be [found here](http://habrahabr.ru/post/167647/ "Ar
 PHP instructions
 ----------------
 just edit js/inplaceeditor.js and change
+
 `const SEVER = 'NODE';`
+
 to
-`const SEVER = 'NODE';`
+
+`const SEVER = 'PHP';`
 
 Node.js instructions
 --------------------
