@@ -81,6 +81,7 @@ $(document).ready(function () {
             processKeyEvent(e.keyCode);
         });*/
 
+        document.onkeypress = processKeyEvent;
         document.onkeyup = processKeyEvent;
     }
 
