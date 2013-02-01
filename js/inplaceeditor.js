@@ -77,16 +77,25 @@ $(document).ready(function () {
         });
 
 
-        $(document).keyup(function (e) {
-            console.log("key:" + e.keyCode);
-            if (e.keyCode == 27)
+        document.onkeypress = processKeyEvent;
+    }
+
+    var processKeyEvent = function (e) {
+        console.log("key:" + e.keyCode);
+        if (e.keyCode == 27)
+            stopEditing();
+        else if (e.keyCode == 37 || e.keyCode == 38 || e.keyCode == 39 || e.keyCode == 40) {
+            //cursor exited the edited area
+            if ($(window.getSelection().anchorNode).parents('[contentEditable]').length == 0)
                 stopEditing();
-            else if (e.keyCode == 37 || e.keyCode == 38 || e.keyCode == 39 || e.keyCode == 40) {
-                //cursor exited the edited area
-                if ($(window.getSelection().anchorNode).parents('[contentEditable]').length == 0)
-                    stopEditing();
+        } else if (e.keyCode == 13) {
+            if (!e.shiftKey) {
+                console.log("enter not allowed");
+                alert("Please use Shift+Enter for new line!")
+                return false;
             }
-        });
+        }
+        return true;
     }
 
     var clearPrettyPrintFormatting = function (parent) {
