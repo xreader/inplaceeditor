@@ -65,11 +65,11 @@ $(document).ready(function () {
             stopHighlighting(event.target);
         });
         $(document).dblclick(function (event) {
-            current = event.target;
             if (EDITING_MODE == ADVANCED_HTML_MODE || $('.prettyprint').length != 0) {
                 console.warn("current mode:" + ADVANCED_HTML_MODE);
                 return false;
             }
+            current = event.target;
             $(current).html('<pre class="prettyprint">' + stripX($(current).html()) + '</pre>');
             prettyPrint();
             stopHighlighting(event.target);
@@ -122,10 +122,6 @@ $(document).ready(function () {
         var content = EDITING_MODE == TEXT_MODE
             ? $(current).text() : EDITING_MODE == ADVANCED_HTML_MODE
             ? clearPrettyPrintFormatting(current) : $(current).html();
-        if (EDITING_MODE == HTML_MODE || EDITING_MODE == ADVANCED_HTML_MODE) {
-            content = content.split('&lt;').join('<');
-            content = content.split('&gt;').join('>');
-        }
         if (EDITING_MODE == HTML_MODE || EDITING_MODE == ADVANCED_HTML_MODE) {
             content = content.split('&lt;').join('<');
             content = content.split('&gt;').join('>');
