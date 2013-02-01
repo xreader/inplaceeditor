@@ -4,6 +4,10 @@ InPlaceEditor
 Edit static HTML pages ( text content and HTML code ) with this simple InPlaceEditor
 ------------------------------------------------
 
+Working demo can be [found here](http://xreader.github.com/inplaceeditor/demo.html "Demo")
+
+An article (in russian) can be [found here](http://habrahabr.ru/post/167647/ "Article")
+
 **Usage example**
 
 **getting html5 boilerplate bootstrap template**

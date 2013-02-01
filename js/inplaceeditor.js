@@ -9,7 +9,7 @@ $(document).ready(function () {
     var highlighting = true;
 
     //modes PHP, NODE, DEMO
-    const SEVER = 'DEMO';
+    const SEVER = 'NODE';
     const pathPrefix = SEVER == 'PHP' ? '/server.php?action=' : '/';
 
     const savePath = pathPrefix + 'save';
