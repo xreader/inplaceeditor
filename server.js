@@ -115,6 +115,7 @@ app.get('/isloggedin', function(req, res){
 //save changes
 app.post('/save', function (req, res) {
     console.log("saving:" + req.body.name);
+    if ( !req.isAuthenticated() ) return false;
     var name = req.param('name', null);
     var content = req.param('content', null);
     if (name && content) {
@@ -128,6 +129,7 @@ app.post('/save', function (req, res) {
 
 app.post('/duplicate', function (req, res) {
     console.log("duplicate:" + req.body.from + "/" + req.body.to);
+    if ( !req.isAuthenticated() ) return false;
     if ( req.body.from && req.body.to ) {
 	    fs.readFile( req.body.from, function (err, data) {
 		if (err) throw err;

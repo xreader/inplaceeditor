@@ -8,7 +8,8 @@ $(document).ready(function () {
     var current = undefined;
     var highlighting = true;
 
-    const SEVER = 'NODE';
+    //modes PHP, NODE, DEMO
+    const SEVER = 'DEMO';
     const pathPrefix = SEVER == 'PHP' ? '/server.php?action=' : '/';
 
     const savePath = pathPrefix + 'save';
@@ -159,18 +160,26 @@ $(document).ready(function () {
         });
     }
 
+    function startEditing() {
+        addControls();
+        initMouesListeners();
+        highlighting = true;
+    }
+
     var initialize = function () {
-        $.get(loginStatusPath, function (data) {
-            if ($.trim( data ) == 'true') {
-                addControls();
-                initMouesListeners();
-                highlighting = true;
-            } else {
-                var controlsCss = ' style=" bottom: 20px; position: absolute; right: 18px; "';
-                $('body').append('<div class="editorControls" ' + controlsCss + '><a href="' + loginPath + '">Admin</div>');
-                highlighting = false;
-            }
-        });
+        if (SEVER == 'DEMO') {
+            startEditing()
+        } else {
+            $.get(loginStatusPath, function (data) {
+                if ($.trim( data ) == 'true') {
+                    startEditing();
+                } else {
+                    var controlsCss = ' style=" bottom: 20px; position: absolute; right: 18px; "';
+                    $('body').append('<div class="editorControls" ' + controlsCss + '><a href="' + loginPath + '">Admin</div>');
+                    highlighting = false;
+                }
+            });
+        }
     };
 
     function removeControls() {
