@@ -2,7 +2,7 @@
 
     //config
     $admin_user = 'admin';
-    $admin_password = 'rootin';
+    $admin_password = 'secret';
 
     //debug
     $debug = false;
