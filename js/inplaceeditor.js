@@ -1,26 +1,26 @@
 $(document).ready(function () {
 
-    const TEXT_MODE = "text";
-    const HTML_MODE = "html";
-    const NONE_MODE = "none";
-    const ADVANCED_HTML_MODE = "advanced";
+    var TEXT_MODE = "text";
+    var HTML_MODE = "html";
+    var NONE_MODE = "none";
+    var ADVANCED_HTML_MODE = "advanced";
     var EDITING_MODE = NONE_MODE;
     var current = undefined;
     var highlighting = true;
 
     //modes PHP, NODE, DEMO
-    const SEVER = 'NODE';
-    const pathPrefix = SEVER == 'PHP' ? '/server.php?action=' : '/';
+    var SERVER = 'PHP';
+    var pathPrefix = SERVER === 'PHP' ? location.pathname + 'server.php?action=' : '/';
 
-    const savePath = pathPrefix + 'save';
-    const copyPath = pathPrefix + 'duplicate';
-    const loginPath = pathPrefix + 'login';
-    const logoutPath = pathPrefix + 'logout';
-    const loginStatusPath = pathPrefix + 'isloggedin';
+    var savePath = pathPrefix + 'save';
+    var copyPath = pathPrefix + 'duplicate';
+    var loginPath = pathPrefix + 'login';
+    var logoutPath = pathPrefix + 'logout';
+    var loginStatusPath = pathPrefix + 'isloggedin';
 
 
     console.log("########################################");
-    console.log("########## InPlaceEditor v.0.1 #######");
+    console.log("########## InPlaceEditor v.0.1.1 #######");
     console.log("########################################");
 
     function InPlaceEditor() {
@@ -95,7 +95,7 @@ $(document).ready(function () {
 
         //document.onkeypress = processKeyEvent;
         //document.onkeyup = processKeyEvent;
-    }
+    };
 
     var processKeyEvent = function (e) {
         console.log("key:" + e.keyCode);
@@ -113,7 +113,7 @@ $(document).ready(function () {
             }
         }
         return true;
-    }
+    };
 
     var clearPrettyPrintFormatting = function (parent) {
         var content = "";
@@ -158,7 +158,7 @@ $(document).ready(function () {
             $('body').append('<script src="http://twitter.github.com/bootstrap/assets/js/google-code-prettify/prettify.js"/>');
         if ($("script[src*='beautify-html.js']").length == 0)
             $('body').append('<script src="https://raw.github.com/einars/js-beautify/master/beautify-html.js"/>');
-    }
+    };
 
     InPlaceEditor.addControls = function() {
         if ($('.editorControls').length > 0) $('.editorControls').remove();
@@ -176,24 +176,24 @@ $(document).ready(function () {
         });
         //add rollover style for highliting elements
         $("<style type='text/css'> .editablearea { box-shadow: 0 0 10px hsl(212, 80%, 50%); outline: 1px solid hsla(206, 77%, 61%, 0.3); } </style>").appendTo("head");
-    }
+    };
 
     InPlaceEditor.startEditing = function() {
         console.log("editing...." + EDITING_MODE);
         InPlaceEditor.addControls();
         InPlaceEditor.initMouesListeners();
         highlighting = true;
-    }
+    };
 
     var initialize = function () {
         console.log("initialize..." + window.InPlaceEditor);
         if (!window.InPlaceEditor) InPlaceEditor = new InPlaceEditor();
         InPlaceEditor.appendServiceStylesAndDependencies();
-        if (SEVER == 'DEMO') {
-            InPlaceEditor.startEditing()
+        if (SERVER === 'DEMO') {
+            InPlaceEditor.startEditing();
         } else {
             $.get(loginStatusPath, function (data) {
-                if ($.trim( data ) == 'true') {
+                if ($.trim( data ) === 'true') {
                     InPlaceEditor.startEditing();
                 } else {
                     var controlsCss = ' style=" bottom: 20px; position: absolute; right: 18px; "';
@@ -206,13 +206,13 @@ $(document).ready(function () {
 
     InPlaceEditor.removeControls = function() {
         $('.editorControls').remove();
-    }
+    };
 
     InPlaceEditor.clearDutyCode = function() {
         $("[contentEditable]").removeAttr("contentEditable");
         $("[editablearea]").removeAttr("editablearea");
         $("style:contains('.editablearea')").remove();
-    }
+    };
 
     var getEntireHtml = function () {
         var node = document.doctype;
