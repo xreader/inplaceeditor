@@ -9,7 +9,7 @@ $(document).ready(function () {
     var highlighting = true;
 
     //modes PHP, NODE, DEMO
-    const SEVER = 'DEMO';
+    const SEVER = 'NODE';
     const pathPrefix = SEVER == 'PHP' ? '/server.php?action=' : '/';
 
     const savePath = pathPrefix + 'save';
@@ -38,7 +38,9 @@ $(document).ready(function () {
         var isEditorControls = $(selector).hasClass('editorControls');
         var closestEditorControls = $(selector).closest('.editorControls').find(selector);
         var isChildOfEditorControls = closestEditorControls != undefined && closestEditorControls.length != 0;
-        return  ( !isEditorControls && !isChildOfEditorControls );
+        var isChildOfBody = $(selector).parents('body').length > 0;
+
+        return  ( !isEditorControls && !isChildOfEditorControls && isChildOfBody );
     };
 
     function stripX(str) {
@@ -56,11 +58,11 @@ $(document).ready(function () {
         });
         $(document).mouseover(function (event) {
             console.log("mouse overe MODE check:" + EDITING_MODE);
-            if (highlighting && isEditable(event.target))
+            if (highlighting && isEditable(event.target) && EDITING_MODE == NONE_MODE )
                 $(event.target).addClass('editablearea');
         });
         $(document).click(function (event) {
-            if (!isEditable(event.target)) return true;
+            if (!isEditable(event.target)) return false;
             if ($(event.target).is('[contentEditable]')) return false;
             if ($(event.target).parents('[contentEditable]').length != 0) return false;
             if (current && !$(event.target).is('[contentEditable]'))
@@ -73,6 +75,7 @@ $(document).ready(function () {
             stopHighlighting(event.target);
         });
         $(document).dblclick(function (event) {
+            if (!isEditable(event.target)) return false;
             if (EDITING_MODE == ADVANCED_HTML_MODE || $('.prettyprint').length != 0) {
                 console.warn("current mode:" + ADVANCED_HTML_MODE);
                 return false;
@@ -92,9 +95,6 @@ $(document).ready(function () {
         $(document).keypress(function (e) {
             processKeyEvent(e);
         });
-
-        //document.onkeypress = processKeyEvent;
-        //document.onkeyup = processKeyEvent;
     }
 
     var processKeyEvent = function (e) {
@@ -139,7 +139,7 @@ $(document).ready(function () {
             content = content.split('&gt;').join('>');
         }
         console.log("new value:" + content);
-        if ($(current).is('body') ) {
+        if ($(current).parents('body').length == 0 ) {
             $(document).unbind('click');
             $(document).unbind('dblclick');
             $(document).unbind('mouseover');
@@ -212,6 +212,9 @@ $(document).ready(function () {
         $("[contentEditable]").removeAttr("contentEditable");
         $("[editablearea]").removeAttr("editablearea");
         $("style:contains('.editablearea')").remove();
+        $("script[src*='ga.js']").remove();
+        $("script#facebook-jssdk").remove();
+        $("style:contains('.fb_')").remove();
     }
 
     var getEntireHtml = function () {
