@@ -57,12 +57,12 @@ $(document).ready(function () {
                 $(event.target).removeClass('editablearea');
         });
         $(document).mouseover(function (event) {
-            console.log("mouse overe MODE check:" + EDITING_MODE);
+            //console.log("mouse overe MODE check:" + EDITING_MODE);
             if (highlighting && isEditable(event.target) && EDITING_MODE == NONE_MODE )
                 $(event.target).addClass('editablearea');
         });
         $(document).click(function (event) {
-            if (!isEditable(event.target)) return false;
+            if (!isEditable(event.target)) return true;
             if ($(event.target).is('[contentEditable]')) return false;
             if ($(event.target).parents('[contentEditable]').length != 0) return false;
             if (current && !$(event.target).is('[contentEditable]'))
@@ -162,9 +162,9 @@ $(document).ready(function () {
 
     InPlaceEditor.addControls = function() {
         if ($('.editorControls').length > 0) $('.editorControls').remove();
-        var controlsCss = ' style=" top: 50px; position: absolute; right: 18px; "';
+        var controlsCss = ' style=" top: 50px; position: fixed; right: 18px; "';
         $('body').append('<div class="editorControls" ' + controlsCss + '><button id="saveBtn" class="btn" >Save</button><button id="actionCopy" class="btn" >Copy</button> </div></div>');
-        controlsCss = ' style=" bottom: 20px; position: absolute; right: 18px; "';
+        controlsCss = ' style=" bottom: 20px; float: right; position: fixed; right: 18px; "';
         $('body').append('<div class="editorControls" ' + controlsCss + '><a href="' + logoutPath + '">Logout</div>');
         $('#saveBtn').click(function () {
             console.log("do save...");
@@ -196,7 +196,7 @@ $(document).ready(function () {
                 if ($.trim( data ) == 'true') {
                     InPlaceEditor.startEditing();
                 } else {
-                    var controlsCss = ' style=" bottom: 20px; position: absolute; right: 18px; "';
+                    var controlsCss = ' style=" bottom: 20px; float: right; position: fixed; right: 18px; "';
                     $('body').append('<div class="editorControls" ' + controlsCss + '><a href="' + loginPath + '">Admin</div>');
                     highlighting = false;
                 }
