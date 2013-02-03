@@ -16,6 +16,7 @@ class Server {
   public function login() {
     if (!empty($_POST['username']) and !empty($_POST['password'])) {
       if ($_POST['username'] == $this->config->getUser() and $_POST['password'] == $this->config->getPassword()) {
+        $this->config->setLoggedIn(true);
         session_start();
         $_SESSION['user'] = $_POST['username'];
         header("Location: " . $this->config->getInstallPath());
@@ -34,7 +35,7 @@ class Server {
 
   public function isLoggedIn() {
     session_start();
-    if (isset($_SESSION['user']) and $_SESSION['user'] === $this->config->getUser()) {
+    if (/* $this->config->getLoggedIn() === true and */ isset($_SESSION['user']) and $_SESSION['user'] === $this->config->getUser()) {
       echo "true";
       return true;
     } else {

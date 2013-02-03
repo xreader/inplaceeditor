@@ -2,26 +2,35 @@
 
 /*
  * Configuration options:
- * username and password in plane text((
- * @To-Do check username and password without using of plane text.
+ * username and password in plain text((
  */
 
 class Config {
 
-  private static $admin_user = 'admin';
-  private static $admin_password = 'secret';
-  private static $installation_basepath = '/~talbot/inplaceeditor/';
+  const ADMIN_USER = 'admin';
+  const ADMIN_PASSWORD = 'secret';
+  const INSTALLATION_BASEPATH = '/~talbot/inplaceeditor/';
+
+  private $is_logged_in = false;
 
   public function getUser() {
-    return self::$admin_user;
+    return self::ADMIN_USER;
   }
 
   public function getPassword() {
-    return self::$admin_password;
+    return self::ADMIN_PASSWORD;
   }
 
   public function getInstallPath() {
-    return self::$installation_basepath;
+    return self::INSTALLATION_BASEPATH;
+  }
+
+  public function getLoggedIn() {
+    return $this->is_logged_in;
+  }
+
+  public function setLoggedIn($bool) {
+    $this->is_logged_in = $bool;
   }
 
 }
