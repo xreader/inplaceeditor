@@ -172,7 +172,8 @@ $(document).ready(function () {
         });
         $('#actionCopy').click(function () {
             console.log("do copy...");
-            duplicate();
+            InPlaceEditor.duplicate();
+            // duplicate();
         });
         //add rollover style for highliting elements
         $("<style type='text/css'> .editablearea { box-shadow: 0 0 10px hsl(212, 80%, 50%); outline: 1px solid hsla(206, 77%, 61%, 0.3); } </style>").appendTo("head");
@@ -235,7 +236,7 @@ $(document).ready(function () {
                 from:filename,
                 to:target
             };
-            $.post(copyPath, data,function (data) {
+            $.post(copyPath, data, function (data) {
                 console.log("saved:" + data);
                 document.location = target;
             }).error(function () {
@@ -250,12 +251,14 @@ $(document).ready(function () {
         InPlaceEditor.removeControls();
         InPlaceEditor.clearDutyCode();
         var entireHtml = getEntireHtml();
+        console.log(filename);
         var data = {
             name:filename,
             content:entireHtml
         };
-        $.post(savePath, data,function (data) {
-            console.log("saved:" + data);
+        console.log(savePath);
+        $.post(savePath, data, function (data) {
+            console.log("saved: \n" + data);
             initialize();
         }).error(function (err) {
             console.log("error" + err);

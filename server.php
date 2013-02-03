@@ -69,11 +69,14 @@ $HTML_BODY_START = '<body>
       <div class="hero-unit">';
 
 
-$HTML_BODY_END = '</div><hr>
+$HTML_BODY_END = <<<'EOT'
+</div><hr>
 <footer><p>&copy; Company 2012</p></footer>
 </div> <!-- /container -->
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
-<script>window . jQuery || document . write("<script src=\'js/libs/jquery-1.9.0.min.js\'></script>")</script>
+<script>
+window . jQuery || document . write('<script src="js/libs/jquery-1.9.0.min.js"></script>');
+</script>
 <script>
   $("a").click(function() {
     window.location = this.href;
@@ -87,7 +90,8 @@ $HTML_BODY_END = '</div><hr>
     <script>window.attachEvent("onload",function(){CFInstall.check({mode:"overlay"})})</script>
 <![endif]-->
 </body>
-</html>';
+</html>
+EOT;
 
 /**
  * Debugging application 
@@ -102,7 +106,7 @@ if ($debug) {
   }
 }
 
-if ($_GET['action'] == 'login' && empty($_POST['user']) && empty($_POST['password'])) {
+if ($_GET['action'] === 'login' && empty($_POST['user']) && empty($_POST['password'])) {
   print $HTML_HEADERS;
   print $HTML_BODY_START;
   echo "<form id='login' action='server.php?action=login' method='post' accept-charset='UTF-8'>";
@@ -118,48 +122,50 @@ if ($_GET['action'] == 'login' && empty($_POST['user']) && empty($_POST['passwor
   echo "</form>";
   print $HTML_BODY_END;
 } else if (!empty($_POST['username']) && !empty($_POST['password'])) {
-  echo '<div><p>processing login request</p>';
-  if ($_POST['username'] == $admin_user && $_POST['password'] == $admin_password) {
-    echo '<p>user authentificated</p></div>';
+  // echo '<div><p>processing login request</p>';
+  if ($_POST['username'] === $admin_user && $_POST['password'] === $admin_password) {
+    // echo '<p>user authentificated</p></div>';
     session_start();
     $_SESSION['user'] = $_POST['username'];
     if ($debug) {
       echo '<div class="debug"><p>user saved to session: ' . $_SESSION['user'];
       echo "<br><strong>ok</strong></p></div>";
     } else {
+      echo $_SERVER['PATH_TRANSLATED'];
       header("Location: /~talbot/inplaceeditor/");
+      exit;
     }
   } else {
     $host = $_SERVER['HTTP_HOST'];
     $uri = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
-    $extra = 'server.php?action=login';
+    $extra = '?action=login';
     header("Location: http://$host$uri/$extra");
     exit;
   }
 } else if ($_GET['action'] === 'isloggedin') {
   session_start();
-  echo (isset($_SESSION['user']) && $_SESSION['user'] == $admin_user) ? 'true' : 'false';
-} else if ($_GET['action'] == 'logout') {
+  echo (isset($_SESSION['user']) && $_SESSION['user'] === $admin_user) ? 'true' : 'false';
+} else if ($_GET['action'] === 'logout') {
   session_start();
   unset($_SESSION['user']);
   session_destroy();
   if ($debug)
     echo "ok";
   else
-    header("Location: /");
+    header("Location: /~talbot/inplaceeditor/");
 } else if ($_GET['action'] == 'save') {
   session_start();
   session_regenerate_id();
 //check if logged in
-  if (isset($_SESSION['user']) && $_SESSION['user'] == $admin_user) {
+  if (isset($_SESSION['user']) && $_SESSION['user'] === $admin_user) {
 //save changes
     echo "user found in session:" . $_SESSION['user'] . "\n";
-    if (!isset($_POST['name']) || !isset($_POST['content']))
+    echo "POST name: " . $_POST['name'] . "\n";
+    if (!isset($_POST['name']) or !isset($_POST['content']))
       die("failed to save!");
     $file = dirname(__FILE__) . "/" . $_POST['name'];
-    echo 'filepath:' . $file;
+    echo 'filepath: ' . $file;
     $content = $_POST['content'];
-    echo "saving changes to:" . $file . "\n" . $content;
     $fh = fopen($file, 'w') or die("can't open file");
     fwrite($fh, $content);
     fclose($fh);
