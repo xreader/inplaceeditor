@@ -100,7 +100,7 @@ $(document).ready(function () {
                 return false;
             }
             current = event.target;
-            $(current).html('<pre class="prettyprint">' + stripX($(current).html()) + '</pre>');
+            $(current).html('<pre class="prettyprint" id="prettyprint">' + stripX($(current).html()) + '</pre>');
             prettyPrint();
             stopHighlighting(event.target);
             EDITING_MODE = ADVANCED_HTML_MODE;
@@ -108,28 +108,82 @@ $(document).ready(function () {
 
 
         $(document).keyup(function (e) {
-            processKeyEvent(e);
+            //processKeyEvent(e);
+            if (e.keyCode == 27)
+                InPlaceEditor.stopEditing();
+            return false;
         });
+//
+//        $(document).keypress(function (e) {
+//            processKeyEvent(e);
+//        });
 
-        $(document).keypress(function (e) {
-            processKeyEvent(e);
-        });
+        if (typeof document.addEventListener != "undefined") {
+            document.addEventListener("keypress", processKeyEvent, false);
+        } else if (typeof document.attachEvent != "undefined") {
+            document.attachEvent("onkeypress", processKeyEvent);
+        }
+    }
+
+    function handleEnter(e) {
+        var sel, range, br, addedBr = false;
+        var evt = e || window.event;
+        var charCode = evt.which || evt.keyCode;
+            //set curret at end of contentEditable (FIX problem with cursor it beyond the pretty print area)
+            if (EDITING_MODE == ADVANCED_HTML_MODE) {
+                var el = document.getElementById("prettyprint");
+                var range = document.createRange();
+                var sel = window.getSelection();
+                if ($(sel.anchorNode).is('[contenteditable]') && el.lastChild) {
+                    range.setStart(el.lastChild, el.lastChild.length);
+                    range.collapse(true);
+                    sel.removeAllRanges();
+                    sel.addRange(range);
+                }
+            }
+            if (typeof window.getSelection != "undefined") {
+                sel = window.getSelection();
+                if (sel.getRangeAt && sel.rangeCount) {
+                    range = sel.getRangeAt(0);
+                    range.deleteContents();
+                    br = document.createElement("br");
+                    range.insertNode(br);
+                    range.setEndAfter(br);
+                    range.setStartAfter(br);
+                    sel.removeAllRanges();
+                    sel.addRange(range);
+                    addedBr = true;
+                }
+            } else if (typeof document.selection != "undefined") {
+                sel = document.selection;
+                if (sel.createRange) {
+                    range = sel.createRange();
+                    range.pasteHTML("<br>");
+                    range.select();
+                    addedBr = true;
+                }
+            }
+
+            // If successful, prevent the browser's default handling of the keypress
+            if (addedBr) {
+                if (typeof evt.preventDefault != "undefined") {
+                    evt.preventDefault();
+                } else {
+                    evt.returnValue = false;
+                }
+            }
     }
 
     var processKeyEvent = function (e) {
         console.log("key:" + e.keyCode);
-        if (e.keyCode == 27)
-            InPlaceEditor.stopEditing();
-        else if (e.keyCode == 37 || e.keyCode == 38 || e.keyCode == 39 || e.keyCode == 40) {
+//        if (e.keyCode == 27)
+//            InPlaceEditor.stopEditing();
+        if (e.keyCode == 37 || e.keyCode == 38 || e.keyCode == 39 || e.keyCode == 40) {
             //cursor exited the edited area
             if ($(window.getSelection().anchorNode).parents('[contentEditable]').length == 0)
                 InPlaceEditor.stopEditing();
         } else if (e.keyCode == 13) {
-            if (!e.shiftKey) {
-                e.preventDefault();
-                alert("Use Shift+Enter for new line!!!");
-                return false;
-            }
+            handleEnter(e);
         }
         return true;
     }
