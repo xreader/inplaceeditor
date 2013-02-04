@@ -17,6 +17,8 @@ $(document).ready(function () {
     const loginPath = pathPrefix + 'login';
     const logoutPath = pathPrefix + 'logout';
     const loginStatusPath = pathPrefix + 'isloggedin';
+    //define the selector (jquery syntax) where editing is possible
+    const editable_container = 'body';
 
 
     console.log("########################################");
@@ -38,7 +40,7 @@ $(document).ready(function () {
         var isEditorControls = $(selector).hasClass('editorControls');
         var closestEditorControls = $(selector).closest('.editorControls').find(selector);
         var isChildOfEditorControls = closestEditorControls != undefined && closestEditorControls.length != 0;
-        var isChildOfBody = $(selector).parents('body').length > 0;
+        var isChildOfBody = $(selector).parents(editable_container).length > 0;
 
         return  ( !isEditorControls && !isChildOfEditorControls && isChildOfBody );
     };
@@ -81,7 +83,10 @@ $(document).ready(function () {
             if ($(event.target).parents('[contentEditable]').length != 0) return false;
             if (current && !$(event.target).is('[contentEditable]'))
                 InPlaceEditor.stopEditing();
-            if ($(event.target).children().length > 0) EDITING_MODE = HTML_MODE;
+            if ($(event.target).children().length > 0) {
+                EDITING_MODE = HTML_MODE;
+                fixCursorPosition();
+            }
             else EDITING_MODE = TEXT_MODE;
             // activate edit mode
             $(event.target).attr('contentEditable', '');
@@ -125,28 +130,32 @@ $(document).ready(function () {
         }
     }
 
+    function fixCursorPosition() {
+        if (EDITING_MODE == ADVANCED_HTML_MODE) {
+            var el = document.getElementById("prettyprint");
+            var range = document.createRange();
+            var sel = window.getSelection();
+            if ($(sel.anchorNode).is('[contenteditable]') && el.lastChild) {
+                range.setStart(el.lastChild, el.lastChild.length);
+                range.collapse(true);
+                sel.removeAllRanges();
+                sel.addRange(range);
+            }
+        }
+    }
+
     function handleEnter(e) {
         var sel, range, br, addedBr = false;
         var evt = e || window.event;
         var charCode = evt.which || evt.keyCode;
             //set curret at end of contentEditable (FIX problem with cursor it beyond the pretty print area)
-            if (EDITING_MODE == ADVANCED_HTML_MODE) {
-                var el = document.getElementById("prettyprint");
-                var range = document.createRange();
-                var sel = window.getSelection();
-                if ($(sel.anchorNode).is('[contenteditable]') && el.lastChild) {
-                    range.setStart(el.lastChild, el.lastChild.length);
-                    range.collapse(true);
-                    sel.removeAllRanges();
-                    sel.addRange(range);
-                }
-            }
-            if (typeof window.getSelection != "undefined") {
+        fixCursorPosition();
+        if (typeof window.getSelection != "undefined") {
                 sel = window.getSelection();
                 if (sel.getRangeAt && sel.rangeCount) {
                     range = sel.getRangeAt(0);
                     range.deleteContents();
-                    br = document.createElement("br");
+                    br = document.createTextNode("\n");
                     range.insertNode(br);
                     range.setEndAfter(br);
                     range.setStartAfter(br);
@@ -158,12 +167,11 @@ $(document).ready(function () {
                 sel = document.selection;
                 if (sel.createRange) {
                     range = sel.createRange();
-                    range.pasteHTML("<br>");
+                    range.pasteHTML("\n");
                     range.select();
                     addedBr = true;
                 }
             }
-
             // If successful, prevent the browser's default handling of the keypress
             if (addedBr) {
                 if (typeof evt.preventDefault != "undefined") {
