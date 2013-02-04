@@ -176,8 +176,6 @@ $(document).ready(function () {
 
     var processKeyEvent = function (e) {
         console.log("key:" + e.keyCode);
-//        if (e.keyCode == 27)
-//            InPlaceEditor.stopEditing();
         if (e.keyCode == 37 || e.keyCode == 38 || e.keyCode == 39 || e.keyCode == 40) {
             //cursor exited the edited area
             if ($(window.getSelection().anchorNode).parents('[contentEditable]').length == 0)
@@ -193,15 +191,16 @@ $(document).ready(function () {
         if ($(parent).find(".prettyprint").children().length == 0)
             content = $(parent).html();
         else
-            $('.prettyprint').children().each(function (i) {
-                var nodeHtml = $(this).html();
-                content += nodeHtml;
+            $('.prettyprint').contents().each(function (i) {
+                var nodeHtml = $(this).html() || $(this).text();
+                content += nodeHtml || "";
             });
         return content;
     };
 
     InPlaceEditor.stopEditing = function () {
         console.log("stop editing....");
+        console.log("content editable text content:" + $('[contenteditable]').text());
         $(current).removeAttr('contentEditable');
         $(current).parents().removeAttr('contentEditable');
         var content = EDITING_MODE == TEXT_MODE
