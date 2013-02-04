@@ -48,6 +48,20 @@ $(document).ready(function () {
         return str.replace(/\&(?!(\w+;))/g, '&amp;').replace(/</g, '&lt;');
     }
 
+    InPlaceEditor.insertTextAtCursor = function (text) {
+        var sel, range, html;
+        if (window.getSelection) {
+            sel = window.getSelection();
+            if (sel.getRangeAt && sel.rangeCount) {
+                range = sel.getRangeAt(0);
+                range.deleteContents();
+                range.insertNode( document.createTextNode(text) );
+            }
+        } else if (document.selection && document.selection.createRange) {
+            document.selection.createRange().text = text;
+        }
+    }
+
     /**
      * entering advanced mode
      */
@@ -72,6 +86,11 @@ $(document).ready(function () {
             // activate edit mode
             $(event.target).attr('contentEditable', '');
             current = event.target;
+            current.onpaste = function(e) {
+                console.log("onpaste..." + e.clipboardData.getData('text/plain') + "+");
+                InPlaceEditor.insertTextAtCursor( e.clipboardData.getData('text/plain') );
+                return false; // to prevent user insert
+            }
             stopHighlighting(event.target);
         });
         $(document).dblclick(function (event) {
