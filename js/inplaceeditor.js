@@ -9,7 +9,7 @@ $(document).ready(function () {
     var highlighting = true;
 
     //modes PHP, NODE, DEMO
-    const SEVER = 'NODE';
+    const SEVER = 'DEMO';
     const pathPrefix = SEVER == 'PHP' ? '/server.php?action=' : '/';
 
     const savePath = pathPrefix + 'save';
@@ -17,6 +17,8 @@ $(document).ready(function () {
     const loginPath = pathPrefix + 'login';
     const logoutPath = pathPrefix + 'logout';
     const loginStatusPath = pathPrefix + 'isloggedin';
+    //define the selector (jquery syntax) where editing is possible
+    const editable_container = 'body';
 
 
     console.log("########################################");
@@ -38,12 +40,28 @@ $(document).ready(function () {
         var isEditorControls = $(selector).hasClass('editorControls');
         var closestEditorControls = $(selector).closest('.editorControls').find(selector);
         var isChildOfEditorControls = closestEditorControls != undefined && closestEditorControls.length != 0;
-        return  ( !isEditorControls && !isChildOfEditorControls );
+        var isChildOfBody = $(selector).parents(editable_container).length > 0;
+
+        return  ( !isEditorControls && !isChildOfEditorControls && isChildOfBody );
     };
 
     function stripX(str) {
         str = style_html(str);
         return str.replace(/\&(?!(\w+;))/g, '&amp;').replace(/</g, '&lt;');
+    }
+
+    InPlaceEditor.insertTextAtCursor = function (text) {
+        var sel, range, html;
+        if (window.getSelection) {
+            sel = window.getSelection();
+            if (sel.getRangeAt && sel.rangeCount) {
+                range = sel.getRangeAt(0);
+                range.deleteContents();
+                range.insertNode( document.createTextNode(text) );
+            }
+        } else if (document.selection && document.selection.createRange) {
+            document.selection.createRange().text = text;
+        }
     }
 
     /**
@@ -55,8 +73,8 @@ $(document).ready(function () {
                 $(event.target).removeClass('editablearea');
         });
         $(document).mouseover(function (event) {
-            console.log("mouse overe MODE check:" + EDITING_MODE);
-            if (highlighting && isEditable(event.target))
+            //console.log("mouse overe MODE check:" + EDITING_MODE);
+            if (highlighting && isEditable(event.target) && EDITING_MODE == NONE_MODE )
                 $(event.target).addClass('editablearea');
         });
         $(document).click(function (event) {
@@ -65,20 +83,29 @@ $(document).ready(function () {
             if ($(event.target).parents('[contentEditable]').length != 0) return false;
             if (current && !$(event.target).is('[contentEditable]'))
                 InPlaceEditor.stopEditing();
-            if ($(event.target).children().length > 0) EDITING_MODE = HTML_MODE;
+            if ($(event.target).children().length > 0) {
+                EDITING_MODE = HTML_MODE;
+                fixCursorPosition();
+            }
             else EDITING_MODE = TEXT_MODE;
             // activate edit mode
             $(event.target).attr('contentEditable', '');
             current = event.target;
+            current.onpaste = function(e) {
+                console.log("onpaste..." + e.clipboardData.getData('text/plain') + "+");
+                InPlaceEditor.insertTextAtCursor( e.clipboardData.getData('text/plain') );
+                return false; // to prevent user insert
+            }
             stopHighlighting(event.target);
         });
         $(document).dblclick(function (event) {
+            if (!isEditable(event.target)) return false;
             if (EDITING_MODE == ADVANCED_HTML_MODE || $('.prettyprint').length != 0) {
                 console.warn("current mode:" + ADVANCED_HTML_MODE);
                 return false;
             }
             current = event.target;
-            $(current).html('<pre class="prettyprint">' + stripX($(current).html()) + '</pre>');
+            $(current).html('<pre class="prettyprint" id="prettyprint">' + stripX($(current).html()) + '</pre>');
             prettyPrint();
             stopHighlighting(event.target);
             EDITING_MODE = ADVANCED_HTML_MODE;
@@ -86,31 +113,83 @@ $(document).ready(function () {
 
 
         $(document).keyup(function (e) {
-            processKeyEvent(e);
+            //processKeyEvent(e);
+            if (e.keyCode == 27)
+                InPlaceEditor.stopEditing();
+            return false;
         });
+//
+//        $(document).keypress(function (e) {
+//            processKeyEvent(e);
+//        });
 
-        $(document).keypress(function (e) {
-            processKeyEvent(e);
-        });
+        if (typeof document.addEventListener != "undefined") {
+            document.addEventListener("keypress", processKeyEvent, false);
+        } else if (typeof document.attachEvent != "undefined") {
+            document.attachEvent("onkeypress", processKeyEvent);
+        }
+    }
 
-        //document.onkeypress = processKeyEvent;
-        //document.onkeyup = processKeyEvent;
+    function fixCursorPosition() {
+        if (EDITING_MODE == ADVANCED_HTML_MODE) {
+            var el = document.getElementById("prettyprint");
+            var range = document.createRange();
+            var sel = window.getSelection();
+            if ($(sel.anchorNode).is('[contenteditable]') && el.lastChild) {
+                range.setStart(el.lastChild, el.lastChild.length);
+                range.collapse(true);
+                sel.removeAllRanges();
+                sel.addRange(range);
+            }
+        }
+    }
+
+    function handleEnter(e) {
+        var sel, range, br, addedBr = false;
+        var evt = e || window.event;
+        var charCode = evt.which || evt.keyCode;
+            //set curret at end of contentEditable (FIX problem with cursor it beyond the pretty print area)
+        fixCursorPosition();
+        if (typeof window.getSelection != "undefined") {
+                sel = window.getSelection();
+                if (sel.getRangeAt && sel.rangeCount) {
+                    range = sel.getRangeAt(0);
+                    range.deleteContents();
+                    br = document.createTextNode("\n");
+                    range.insertNode(br);
+                    range.setEndAfter(br);
+                    range.setStartAfter(br);
+                    sel.removeAllRanges();
+                    sel.addRange(range);
+                    addedBr = true;
+                }
+            } else if (typeof document.selection != "undefined") {
+                sel = document.selection;
+                if (sel.createRange) {
+                    range = sel.createRange();
+                    range.pasteHTML("\n");
+                    range.select();
+                    addedBr = true;
+                }
+            }
+            // If successful, prevent the browser's default handling of the keypress
+            if (addedBr) {
+                if (typeof evt.preventDefault != "undefined") {
+                    evt.preventDefault();
+                } else {
+                    evt.returnValue = false;
+                }
+            }
     }
 
     var processKeyEvent = function (e) {
         console.log("key:" + e.keyCode);
-        if (e.keyCode == 27)
-            InPlaceEditor.stopEditing();
-        else if (e.keyCode == 37 || e.keyCode == 38 || e.keyCode == 39 || e.keyCode == 40) {
+        if (e.keyCode == 37 || e.keyCode == 38 || e.keyCode == 39 || e.keyCode == 40) {
             //cursor exited the edited area
             if ($(window.getSelection().anchorNode).parents('[contentEditable]').length == 0)
                 InPlaceEditor.stopEditing();
         } else if (e.keyCode == 13) {
-            if (!e.shiftKey) {
-                e.preventDefault();
-                alert("Use Shift+Enter for new line!!!");
-                return false;
-            }
+            handleEnter(e);
         }
         return true;
     }
@@ -120,15 +199,16 @@ $(document).ready(function () {
         if ($(parent).find(".prettyprint").children().length == 0)
             content = $(parent).html();
         else
-            $('.prettyprint').children().each(function (i) {
-                var nodeHtml = $(this).html();
-                content += nodeHtml;
+            $('.prettyprint').contents().each(function (i) {
+                var nodeHtml = $(this).html() || $(this).text();
+                content += nodeHtml || "";
             });
         return content;
     };
 
     InPlaceEditor.stopEditing = function () {
         console.log("stop editing....");
+        console.log("content editable text content:" + $('[contenteditable]').text());
         $(current).removeAttr('contentEditable');
         $(current).parents().removeAttr('contentEditable');
         var content = EDITING_MODE == TEXT_MODE
@@ -139,7 +219,7 @@ $(document).ready(function () {
             content = content.split('&gt;').join('>');
         }
         console.log("new value:" + content);
-        if ($(current).is('body') ) {
+        if ($(current).parents('body').length == 0 ) {
             $(document).unbind('click');
             $(document).unbind('dblclick');
             $(document).unbind('mouseover');
@@ -162,9 +242,9 @@ $(document).ready(function () {
 
     InPlaceEditor.addControls = function() {
         if ($('.editorControls').length > 0) $('.editorControls').remove();
-        var controlsCss = ' style=" top: 50px; position: absolute; right: 18px; "';
+        var controlsCss = ' style=" top: 50px; position: fixed; right: 18px; "';
         $('body').append('<div class="editorControls" ' + controlsCss + '><button id="saveBtn" class="btn" >Save</button><button id="actionCopy" class="btn" >Copy</button> </div></div>');
-        controlsCss = ' style=" bottom: 20px; position: absolute; right: 18px; "';
+        controlsCss = ' style=" bottom: 20px; float: right; position: fixed; right: 18px; "';
         $('body').append('<div class="editorControls" ' + controlsCss + '><a href="' + logoutPath + '">Logout</div>');
         $('#saveBtn').click(function () {
             console.log("do save...");
@@ -196,7 +276,7 @@ $(document).ready(function () {
                 if ($.trim( data ) == 'true') {
                     InPlaceEditor.startEditing();
                 } else {
-                    var controlsCss = ' style=" bottom: 20px; position: absolute; right: 18px; "';
+                    var controlsCss = ' style=" bottom: 20px; float: right; position: fixed; right: 18px; "';
                     $('body').append('<div class="editorControls" ' + controlsCss + '><a href="' + loginPath + '">Admin</div>');
                     highlighting = false;
                 }
@@ -212,6 +292,9 @@ $(document).ready(function () {
         $("[contentEditable]").removeAttr("contentEditable");
         $("[editablearea]").removeAttr("editablearea");
         $("style:contains('.editablearea')").remove();
+        $("script[src*='ga.js']").remove();
+        $("script#facebook-jssdk").remove();
+        $("style:contains('.fb_')").remove();
     }
 
     var getEntireHtml = function () {
@@ -227,6 +310,7 @@ $(document).ready(function () {
     };
 
     InPlaceEditor.duplicate = function () {
+        if ( SEVER == 'DEMO') return false;
         var url = window.location.pathname;
         var filename = url.substring(url.lastIndexOf('/') + 1) || 'index.html';
         var target = window.prompt("Enter new name:", "");
@@ -245,6 +329,7 @@ $(document).ready(function () {
     };
 
     InPlaceEditor.saveChanges = function () {
+        if ( SEVER == 'DEMO') return false;
         var url = window.location.pathname;
         var filename = url.substring(url.lastIndexOf('/') + 1) || 'index.html';
         InPlaceEditor.removeControls();
