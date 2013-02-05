@@ -15,7 +15,7 @@ class Server {
 
   public function login() {
     if (!empty($_POST['username']) and !empty($_POST['password'])) {
-      if ($_POST['username'] == $this->config->getUser() and $_POST['password'] == $this->config->getPassword()) {
+      if ($_POST['username'] === $this->config->getUser() and $_POST['password'] === $this->config->getPassword()) {
         $this->config->setLoggedIn(true);
         session_start();
         $_SESSION['user'] = $_POST['username'];
@@ -52,11 +52,26 @@ class Server {
       $file = dirname(__FILE__) . "/" . $_POST['name'];
       $content = $_POST['content'];
       $fh = fopen($file, 'w') or die("can't open file \n");
-      fwrite($fh, $content);
+      fwrite($fh, stripcslashes($content));
       fclose($fh);
       echo "\n ok \n";
     } else {
       header("Location: " . $this->config->getInstallPath());
+    }
+  }
+
+  public function duplicate() {
+    if ($this->isLoggedIn() === true) {
+      if (!isset($_POST['from']) or !isset($_POST['to']))
+        die("Failed to save due to uupropriate pararmetres! \n");
+      $filename = dirname(__FILE__) . "/" . $_POST['from'];
+      $target = dirname(__FILE__) . "/" . $_POST['to'];
+      if (file_exists($filename) === true and is_file($filename) === true and !file_exists($target)) {
+        copy($filename, $target);
+        echo "\n ok \n";
+      } else {
+        header("Location: " . $this->config->getInstallPath());
+      }
     }
   }
 
@@ -81,6 +96,10 @@ switch ($server->get_action) {
 
   case 'isloggedin':
     $server->isLoggedIn();
+    break;
+
+  case 'duplicate':
+    $server->duplicate();
     break;
 
   default:

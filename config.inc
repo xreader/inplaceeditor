@@ -11,7 +11,7 @@ class Config {
   const ADMIN_PASSWORD = 'secret';
   const INSTALLATION_BASEPATH = '/~talbot/inplaceeditor/';
 
-  private $is_logged_in = false;
+  public $is_logged_in = false;
 
   public function getUser() {
     return self::ADMIN_USER;
