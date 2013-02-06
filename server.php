@@ -6,7 +6,6 @@ require_once 'htmlEntities.inc';
 class Server {
 
   public $get_action = '';
-  private $config;
 
   public function __construct() {
     $this->get_action = $_GET['action'];
@@ -15,10 +14,10 @@ class Server {
 
   public function login() {
     if (!empty($_POST['username']) and !empty($_POST['password'])) {
-      if ($_POST['username'] === $this->config->getUser() and $_POST['password'] === $this->config->getPassword()) {
+      if ($_POST['username'] === Config::getUser() and $_POST['password'] === Config::getPassword()) {
         session_start();
-        $_SESSION['user'] = $_POST['username'];
-        header("Location: " . $this->config->getInstallPath());
+        (string) $_SESSION['user'] = $_POST['username'];
+        header("Location: " . Config::getInstallPath());
         exit;
       }
     }
@@ -28,13 +27,13 @@ class Server {
     session_start();
     unset($_SESSION['user']);
     session_destroy();
-    header("Location: " . $this->config->getInstallPath());
+    header("Location: " . Config::getInstallPath());
     exit;
   }
 
   public function isLoggedIn() {
     session_start();
-    if (isset($_SESSION['user']) and $_SESSION['user'] === $this->config->getUser()) {
+    if (isset($_SESSION['user']) and $_SESSION['user'] === Config::getUser()) {
       echo "true";
       return true;
     } else {
@@ -48,14 +47,14 @@ class Server {
     if ($this->isLoggedIn() === true) {
       if (!isset($_POST['name']) or !isset($_POST['content']))
         die("failed to save! \n");
-      $file = dirname(__FILE__) . "/" . $_POST['name'];
-      $content = $_POST['content'];
+      (string) $file = dirname(__FILE__) . "/" . $_POST['name'];
+      (string) $content = $_POST['content'];
       $fh = fopen($file, 'w') or die("can't open file \n");
       fwrite($fh, stripcslashes($content));
       fclose($fh);
       echo "\n ok \n";
     } else {
-      header("Location: " . $this->config->getInstallPath());
+      header("Location: " . Config::getInstallPath());
     }
   }
 
@@ -63,13 +62,13 @@ class Server {
     if ($this->isLoggedIn() === true) {
       if (!isset($_POST['from']) or !isset($_POST['to']))
         die("Failed to save due to uupropriate pararmetres! \n");
-      $filename = dirname(__FILE__) . "/" . $_POST['from'];
-      $target = dirname(__FILE__) . "/" . $_POST['to'];
+      (string) $filename = dirname(__FILE__) . "/" . $_POST['from'];
+      (string) $target = dirname(__FILE__) . "/" . $_POST['to'];
       if (file_exists($filename) === true and is_file($filename) === true and !file_exists($target)) {
         copy($filename, $target);
         echo "\n ok \n";
       } else {
-        header("Location: " . $this->config->getInstallPath());
+        header("Location: " . Config::getInstallPath());
       }
     }
   }
@@ -78,25 +77,25 @@ class Server {
     if ($this->isLoggedIn() === true) {
       if (!isset($_POST['dirname']))
         die("No directory name provided! \n");
-      $newDirname = dirname(__FILE__) . "/" . $_POST['dirname'];
+      (string) $newDirname = dirname(__FILE__) . "/" . $_POST['dirname'];
       if (!file_exists($newDirname)) {
         mkdir($newDirname, 0777);
         echo "\n Directory created \n";
       } else {
-        header("Location: " . $this->config->getInstallPath());
+        header("Location: " . Config::getInstallPath());
       }
     }
   }
 
 }
 
-(object) $server = new Server();
+$server = new Server();
 switch ($server->get_action) {
+
   case 'login':
     $server->login();
-    (object) $loginPage = new HtmlEntities();
+    $loginPage = new HtmlEntities();
     echo $loginPage->getLoginPage();
-
     break;
 
   case 'logout':
@@ -120,7 +119,7 @@ switch ($server->get_action) {
     break;
 
   default:
-    (object) $errorPage = new HtmlEntities();
+    $errorPage = new HtmlEntities();
     echo $errorPage->getErrorPage();
     break;
 }

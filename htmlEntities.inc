@@ -1,5 +1,7 @@
 <?php
 
+require_once 'config.inc';
+
 /**
  * html.inc is an includes file with HTML headers and HTML body
  *
@@ -7,9 +9,8 @@
  */
 class HtmlEntities {
 
-  private $config;
 // NOWDOC fot HTML headers
-  public $HTML_HEADER = <<<'EOT'
+  private $HTML_HEADER = <<<'EOT'
 <!doctype html>
 <!--[if lt IE 8]> <html class="no-js ie7 oldie" lang="en"> <![endif]-->
 <!--[if IE 8]>    <html class="no-js ie8 oldie" lang="en"> <![endif]-->
@@ -17,7 +18,7 @@ class HtmlEntities {
 <!--[if gt IE 9]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
 EOT;
 // NOWDOC for HTML head section
-  public $HTML_HEAD = <<<'EOT'
+  private $HTML_HEAD = <<<'EOT'
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -46,7 +47,7 @@ EOT;
   </head>
 EOT;
 // NOWDOC for beginning of the BODY
-  public $HTML_BODY_START = <<<'EOT'
+  private $HTML_BODY_START = <<<'EOT'
   <body>
     <div class="navbar navbar-fixed-top">
       <div class="navbar-inner">
@@ -71,7 +72,7 @@ EOT;
       <div class="hero-unit">
 EOT;
 // NOWDOC for login form
-  public $HTML_LOGIN_FORM = <<<'EOT'
+  private $HTML_LOGIN_FORM = <<<'EOT'
 <form id='login' action='server.php?action=login' method='post' accept-charset='UTF-8'>
   <fieldset><legend>Login</legend>
     <input type='hidden' name='submitted' id='submitted' value='1'/>
@@ -83,7 +84,7 @@ EOT;
   </fieldset></form>
 EOT;
 // NOWDOC for the end of the BODY
-  public $HTML_BODY_END = <<<'EOT'
+  private $HTML_BODY_END = <<<'EOT'
 </div><hr>
 <footer><p>&copy; Company 2012</p></footer>
 </div> <!-- /container -->
@@ -106,7 +107,7 @@ window.jQuery || document.write("<script src='js/libs/jquery-1.9.0.min.js'></scr
 </body>
 </html>
 EOT;
-  public $HTML_ERROR_HEAD = <<<'EOT'
+  private $HTML_ERROR_HEAD = <<<'EOT'
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -134,11 +135,12 @@ EOT;
     <![endif]-->
   </head>
 EOT;
-  public $HTML_ERROR_BODY = <<<EOT
+  private $HTML_ERROR_BODY_START = <<<EOT
  <h1>Error 404</h1>
  <h3><em>Page you are looking for is not found on this server.</em></h3>
- <br><h2><a href="/">Return to Home Page.</a></h2>
+ <br><h2><a href="
 EOT;
+  private $HTML_ERROR_BODY_END = '">Return to Home Page.</a></h2>';
 
   public function getLoginPage() {
     $loginPage = $this->HTML_HEADER . $this->HTML_HEAD . $this->HTML_BODY_START . $this->HTML_LOGIN_FORM . $this->HTML_BODY_END;
@@ -146,7 +148,7 @@ EOT;
   }
 
   public function getErrorPage() {
-    $errorPage = $this->HTML_HEADER . $this->HTML_ERROR_HEAD . $this->HTML_BODY_START . $this->HTML_ERROR_BODY . $this->HTML_BODY_END;
+    $errorPage = $this->HTML_HEADER . $this->HTML_ERROR_HEAD . $this->HTML_BODY_START . $this->HTML_ERROR_BODY_START . Config::getInstallPath() . $this->HTML_ERROR_BODY_END . $this->HTML_BODY_END;
     return $errorPage;
   }
 

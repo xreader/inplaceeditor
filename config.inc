@@ -11,15 +11,15 @@ class Config {
   const ADMIN_PASSWORD = 'secret';
   const INSTALLATION_BASEPATH = 'http://localhost/~talbot/inplaceeditor/';
 
-  public function getUser() {
+  public static function getUser() {
     return self::ADMIN_USER;
   }
 
-  public function getPassword() {
+  public static function getPassword() {
     return self::ADMIN_PASSWORD;
   }
 
-  public function getInstallPath() {
+  public static function getInstallPath() {
     return self::INSTALLATION_BASEPATH;
   }
 

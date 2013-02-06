@@ -22,7 +22,7 @@ $(document).ready(function () {
 
 
     console.log("########################################");
-    console.log("########## InPlaceEditor v.0.1.2 #######");
+    console.log("########## InPlaceEditor v.0.1.3 #######");
     console.log("########################################");
 
     function InPlaceEditor() {
@@ -39,7 +39,7 @@ $(document).ready(function () {
     var isEditable = function (selector) {
         var isEditorControls = $(selector).hasClass('editorControls');
         var closestEditorControls = $(selector).closest('.editorControls').find(selector);
-        var isChildOfEditorControls = closestEditorControls != undefined && closestEditorControls.length != 0;
+        var isChildOfEditorControls = closestEditorControls !== undefined && closestEditorControls.length !== 0;
         return  ( !isEditorControls && !isChildOfEditorControls );
     };
 
@@ -64,7 +64,7 @@ $(document).ready(function () {
         $(document).click(function (event) {
             if (!isEditable(event.target)) return true;
             if ($(event.target).is('[contentEditable]')) return false;
-            if ($(event.target).parents('[contentEditable]').length != 0) return false;
+            if ($(event.target).parents('[contentEditable]').length !== 0) return false;
             if (current && !$(event.target).is('[contentEditable]'))
                 InPlaceEditor.stopEditing();
             if ($(event.target).children().length > 0) EDITING_MODE = HTML_MODE;
@@ -75,7 +75,7 @@ $(document).ready(function () {
             stopHighlighting(event.target);
         });
         $(document).dblclick(function (event) {
-            if (EDITING_MODE == ADVANCED_HTML_MODE || $('.prettyprint').length != 0) {
+            if (EDITING_MODE === ADVANCED_HTML_MODE || $('.prettyprint').length !== 0) {
                 console.warn("current mode:" + ADVANCED_HTML_MODE);
                 return false;
             }
@@ -101,13 +101,13 @@ $(document).ready(function () {
 
     var processKeyEvent = function (e) {
         console.log("key:" + e.keyCode);
-        if (e.keyCode == 27)
+        if (e.keyCode === 27)
             InPlaceEditor.stopEditing();
-        else if (e.keyCode == 37 || e.keyCode == 38 || e.keyCode == 39 || e.keyCode == 40) {
+        else if (e.keyCode === 37 || e.keyCode === 38 || e.keyCode === 39 || e.keyCode === 40) {
             //cursor exited the edited area
-            if ($(window.getSelection().anchorNode).parents('[contentEditable]').length == 0)
+            if ($(window.getSelection().anchorNode).parents('[contentEditable]').length === 0)
                 InPlaceEditor.stopEditing();
-        } else if (e.keyCode == 13) {
+        } else if (e.keyCode === 13) {
             if (!e.shiftKey) {
                 e.preventDefault();
                 alert("Use Shift+Enter for new line!!!");
@@ -119,7 +119,7 @@ $(document).ready(function () {
 
     var clearPrettyPrintFormatting = function (parent) {
         var content = "";
-        if ($(parent).find(".prettyprint").children().length == 0)
+        if ($(parent).find(".prettyprint").children().length === 0)
             content = $(parent).html();
         else
             $('.prettyprint').children().each(function (i) {
@@ -133,10 +133,10 @@ $(document).ready(function () {
         console.log("stop editing....");
         $(current).removeAttr('contentEditable');
         $(current).parents().removeAttr('contentEditable');
-        var content = EDITING_MODE == TEXT_MODE
-            ? $(current).text() : EDITING_MODE == ADVANCED_HTML_MODE
+        var content = EDITING_MODE === TEXT_MODE
+            ? $(current).text() : EDITING_MODE === ADVANCED_HTML_MODE
             ? clearPrettyPrintFormatting(current) : $(current).html();
-        if (EDITING_MODE == HTML_MODE || EDITING_MODE == ADVANCED_HTML_MODE) {
+        if (EDITING_MODE === HTML_MODE || EDITING_MODE === ADVANCED_HTML_MODE) {
             content = content.split('&lt;').join('<');
             content = content.split('&gt;').join('>');
         }
@@ -154,11 +154,11 @@ $(document).ready(function () {
     };
 
     InPlaceEditor.appendServiceStylesAndDependencies = function () {
-        if ($("link[href*='prettify.css']").length == 0)
+        if ($("link[href*='prettify.css']").length === 0)
             $('head').append('<link rel="stylesheet" href="http://twitter.github.com/bootstrap/assets/js/google-code-prettify/prettify.css" type="text/css" />');
-        if ($("script[src*='prettify.js']").length == 0)
+        if ($("script[src*='prettify.js']").length === 0)
             $('body').append('<script src="http://twitter.github.com/bootstrap/assets/js/google-code-prettify/prettify.js"/>');
-        if ($("script[src*='beautify-html.js']").length == 0)
+        if ($("script[src*='beautify-html.js']").length === 0)
             $('body').append('<script src="https://raw.github.com/einars/js-beautify/master/beautify-html.js"/>');
     };
 
