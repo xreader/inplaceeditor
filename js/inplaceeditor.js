@@ -5,22 +5,24 @@ $(document).ready(function () {
     var NONE_MODE = "none";
     var ADVANCED_HTML_MODE = "advanced";
     var EDITING_MODE = NONE_MODE;
+    var SERVER_PATH = "http://localhost/~talbot/inplaceeditor/";
     var current = undefined;
     var highlighting = true;
 
     //modes PHP, NODE, DEMO
     var SERVER = 'PHP';
-    var pathPrefix = SERVER === 'PHP' ? location.pathname + 'server.php?action=' : '/';
+    var pathPrefix = SERVER === 'PHP' ? SERVER_PATH + 'server.php?action=' : '/';
 
     var savePath = pathPrefix + 'save';
     var copyPath = pathPrefix + 'duplicate';
+    var mkdirPath = pathPrefix + 'mkdir';
     var loginPath = pathPrefix + 'login';
     var logoutPath = pathPrefix + 'logout';
     var loginStatusPath = pathPrefix + 'isloggedin';
 
 
     console.log("########################################");
-    console.log("########## InPlaceEditor v.0.1.1 #######");
+    console.log("########## InPlaceEditor v.0.1.2 #######");
     console.log("########################################");
 
     function InPlaceEditor() {
@@ -163,7 +165,7 @@ $(document).ready(function () {
     InPlaceEditor.addControls = function() {
         if ($('.editorControls').length > 0) $('.editorControls').remove();
         var controlsCss = ' style=" top: 50px; position: absolute; right: 18px; "';
-        $('body').append('<div class="editorControls" ' + controlsCss + '><button id="saveBtn" class="btn" >Save</button><button id="actionCopy" class="btn" >Copy</button> </div></div>');
+        $('body').append('<div class="editorControls" ' + controlsCss + '><button id="saveBtn" class="btn" >Save</button><button id="actionCopy" class="btn" >Copy</button> <button id="makeDirectory" class="btn" >New Folder</button></div></div>');
         controlsCss = ' style=" bottom: 20px; position: absolute; right: 18px; "';
         $('body').append('<div class="editorControls" ' + controlsCss + '><a href="' + logoutPath + '">Logout</div>');
         $('#saveBtn').click(function () {
@@ -173,7 +175,10 @@ $(document).ready(function () {
         $('#actionCopy').click(function () {
             console.log("do copy...");
             InPlaceEditor.duplicate();
-            // duplicate();
+        });
+        $('#makeDirectory').click(function () {
+          console.log("Creating new directory... \n");
+          InPlaceEditor.mkdir();
         });
         //add rollover style for highliting elements
         $("<style type='text/css'> .editablearea { box-shadow: 0 0 10px hsl(212, 80%, 50%); outline: 1px solid hsla(206, 77%, 61%, 0.3); } </style>").appendTo("head");
@@ -243,6 +248,20 @@ $(document).ready(function () {
                     console.log("error");
                 });
         }
+    };
+    
+    InPlaceEditor.mkdir = function() {
+      var dirname = window.prompt("Enter directory name: ", "");
+      if (dirname) {
+        var data = {
+          dirname:dirname
+        };
+        $.post(mkdirPath, data, function(data) {
+          console.log("Directory created: " + data);
+        }).error(function() {
+         console.log("Error creating directory.");
+        });
+      }
     };
 
     InPlaceEditor.saveChanges = function () {

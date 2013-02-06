@@ -74,6 +74,20 @@ class Server {
     }
   }
 
+  public function mkdir() {
+    if ($this->isLoggedIn() === true) {
+      if (!isset($_POST['dirname']))
+        die("No directory name provided! \n");
+      $newDirname = dirname(__FILE__) . "/" . $_POST['dirname'];
+      if (!file_exists($newDirname)) {
+        mkdir($newDirname, 0777);
+        echo "\n Directory created \n";
+      } else {
+        header("Location: " . $this->config->getInstallPath());
+      }
+    }
+  }
+
 }
 
 (object) $server = new Server();
@@ -99,6 +113,10 @@ switch ($server->get_action) {
 
   case 'duplicate':
     $server->duplicate();
+    break;
+
+  case 'mkdir':
+    $server->mkdir();
     break;
 
   default:
