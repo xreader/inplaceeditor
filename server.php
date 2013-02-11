@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @todo Write documentation to server implementation.
+ * @author Dmitry Tretyakov <d.tretyakov@me.com>
+ * @version 0.2
+ */
 require_once 'config.inc';
 require_once 'htmlEntities.inc';
 
@@ -53,22 +58,28 @@ class Server {
       fwrite($fh, stripcslashes($content));
       fclose($fh);
       echo "\n ok \n";
+      return true;
     } else {
       header("Location: " . Config::getInstallPath());
+      return false;
     }
   }
 
   public function duplicate() {
     if ($this->isLoggedIn() === true) {
       if (!isset($_POST['from']) or !isset($_POST['to']))
-        die("Failed to save due to uupropriate pararmetres! \n");
+        die("Failed to save. \n");
       (string) $filename = dirname(__FILE__) . "/" . $_POST['from'];
       (string) $target = dirname(__FILE__) . "/" . $_POST['to'];
+      (string) $basepath = '<head>' . "\n" . '<base href="' . Config::getInstallPath() . '" />';
       if (file_exists($filename) === true and is_file($filename) === true and !file_exists($target)) {
-        copy($filename, $target);
-        echo "\n ok \n";
+        $doc = file_get_contents($filename);
+        file_put_contents($target, str_replace('<head>', $basepath, $doc));
+        echo "\n File succesfully copied. \n";
+        return true;
       } else {
         header("Location: " . Config::getInstallPath());
+        return false;
       }
     }
   }

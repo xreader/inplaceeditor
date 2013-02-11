@@ -5,7 +5,7 @@ $(document).ready(function () {
     var NONE_MODE = "none";
     var ADVANCED_HTML_MODE = "advanced";
     var EDITING_MODE = NONE_MODE;
-    var SERVER_PATH = "http://localhost/~talbot/inplaceeditor/";
+    var SERVER_PATH = "http://localhost/";
     var current = undefined;
     var highlighting = true;
 
@@ -29,7 +29,7 @@ $(document).ready(function () {
         return InPlaceEditor;
     }
 
-    window.InPlaceEditor = window.InPlaceEditor  || InPlaceEditor;
+    window.InPlaceEditor = window.InPlaceEditor || InPlaceEditor;
 
     var stopHighlighting = function (selector) {
         $(selector).removeClass('editablearea');
@@ -233,8 +233,8 @@ $(document).ready(function () {
     };
 
     InPlaceEditor.duplicate = function () {
-        var url = window.location.pathname;
-        var filename = url.substring(url.lastIndexOf('/') + 1) || 'index.html';
+        var url = window.location.href;
+        var filename = url.replace(SERVER_PATH, '') || 'index.html';
         var target = window.prompt("Enter new name:", "");
         if (target) {
             var data = {
@@ -265,9 +265,9 @@ $(document).ready(function () {
     };
 
     InPlaceEditor.saveChanges = function () {
-        var url = window.location.pathname;
-        var filename = url.substring(url.lastIndexOf('/') + 1) || 'index.html';
-        InPlaceEditor.removeControls();
+      var url = window.location.href;
+      var filename = url.replace(SERVER_PATH, '') || 'index.html';
+      InPlaceEditor.removeControls();
         InPlaceEditor.clearDutyCode();
         var entireHtml = getEntireHtml();
         console.log(filename);
