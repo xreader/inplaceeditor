@@ -1,91 +1,137 @@
 <?php
 
-    //config
-    $admin_user = 'admin';
-    $admin_password = 'secret';
+/**
+ * @todo Write documentation to server implementation.
+ * @author Dmitry Tretyakov <d.tretyakov@me.com>
+ * @version 0.2
+ */
+require_once 'config.inc';
+require_once 'htmlEntities.inc';
 
-    //debug
-    $debug = false;
-    if ( $debug ) {
-        echo "<p>Debug</p>";
-        echo "<p>Action:".$_GET['action']."</p>";
-        if (!empty($_POST['username'])) {
-            echo "<p>Log in user:".$_POST['username']."</p>";
-            echo "<p>Log in user:"."Password:".$_POST['password']."</p>";
-        }
-    }
+class Server {
 
-    if ( $_GET['action'] == 'login' && empty( $_POST['user'] ) && empty( $_POST['password'] ) ) {
-        echo "<html>";
-        echo "<body>";
-        echo "<form id='login' action='server.php?action=login' method='post' accept-charset='UTF-8'>";
-        echo "<fieldset>";
-        echo "<legend>Login</legend>";
-        echo "<input type='hidden' name='submitted' id='submitted' value='1'/>";
-        echo "<label for='username' >UserName*:</label>";
-        echo "<input type='text' name='username' id='username'  maxlength='50' />";
-        echo "<label for='password' >Password*:</label>";
-        echo "<input type='password' name='password' id='password' maxlength='50' />";
-        echo "<input type='submit' name='Submit' value='Submit' />";
-        echo "</fieldset>";
-        echo "</form>";
-        echo "</body>";
-        echo "</html>";
-    } else if ( !empty( $_POST['username'] ) && !empty( $_POST['password'] ) ) {
-        echo 'processing login request';
-        if ( $_POST['username'] == $admin_user && $_POST['password'] == $admin_password ) {
-            echo 'user authentificated';
-            session_start();
-            $_SESSION['user'] = $_POST['username'];
-            if ( $debug ) {
-                echo "user saved to session:".$_SESSION['user'];
-                echo "ok";
-            }else{
-                header("Location: /");
-            }
-        } else {
-            $host  = $_SERVER['HTTP_HOST'];
-            $uri  = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
-            $extra = 'server.php?action=login';
-            header("Location: http://$host$uri/$extra");
-            exit;
-        }
-    } else if ($_GET['action'] == 'isloggedin') {
+  public $get_action = '';
+
+  public function __construct() {
+    $this->get_action = $_GET['action'];
+    $this->config = new Config();
+  }
+
+  public function login() {
+    if (!empty($_POST['username']) and !empty($_POST['password'])) {
+      if ($_POST['username'] === Config::getUser() and $_POST['password'] === Config::getPassword()) {
         session_start();
-        echo (isset( $_SESSION['user'] ) && $_SESSION['user'] == $admin_user)?'true':'false';
-    } else if ($_GET['action'] == 'logout') {
-        session_start();
-        unset($_SESSION['user']);
-        session_destroy();
-        if ( $debug )
-            echo "ok";
-        else
-            header("Location: /");
-    } else if ($_GET['action'] == 'save') {
-         session_start();
-         session_regenerate_id();
-         //check if logged in
-        if ( isset( $_SESSION['user'] ) && $_SESSION['user'] == $admin_user ) {
-            //save changes
-            echo "user found in session:".$_SESSION['user']."\n";
-            if (!isset($_POST['name']) || !isset($_POST['content']))
-                die("failed to save!");
-            $file = dirname(__FILE__)."/".$_POST['name'];
-            echo 'filepath:'.$file;
-            $content = $_POST['content'];
-            echo "saving changes to:".$file."\n".$content;
-            $fh = fopen($file, 'w') or die("can't open file");
-            fwrite($fh, $content);
-            fclose($fh);
-            echo "ok";
-        } else {
-            //echo "session?".$_SESSION['user'];
-            $host  = $_SERVER['HTTP_HOST'];
-            $uri  = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
-            $extra = 'server.php?action=login';
-            header("Location: http://$host$uri/$extra");
-            exit;
-        }
+        (string) $_SESSION['user'] = $_POST['username'];
+        header("Location: " . Config::getInstallPath());
+        exit;
+      }
     }
+  }
+
+  public function logout() {
+    session_start();
+    unset($_SESSION['user']);
+    session_destroy();
+    header("Location: " . Config::getInstallPath());
+    exit;
+  }
+
+  public function isLoggedIn() {
+    session_start();
+    if (isset($_SESSION['user']) and $_SESSION['user'] === Config::getUser()) {
+      echo "true";
+      return true;
+    } else {
+      echo "false";
+      return false;
+    }
+    exit;
+  }
+
+  public function save() {
+    if ($this->isLoggedIn() === true) {
+      if (!isset($_POST['name']) or !isset($_POST['content']))
+        die("failed to save! \n");
+      (string) $file = dirname(__FILE__) . "/" . $_POST['name'];
+      (string) $content = $_POST['content'];
+      $fh = fopen($file, 'w') or die("can't open file \n");
+      fwrite($fh, stripcslashes($content));
+      fclose($fh);
+      echo "\n ok \n";
+      return true;
+    } else {
+      header("Location: " . Config::getInstallPath());
+      return false;
+    }
+  }
+
+  public function duplicate() {
+    if ($this->isLoggedIn() === true) {
+      if (!isset($_POST['from']) or !isset($_POST['to']))
+        die("Failed to save. \n");
+      (string) $filename = dirname(__FILE__) . "/" . $_POST['from'];
+      (string) $target = dirname(__FILE__) . "/" . $_POST['to'];
+      (string) $basepath = '<head>' . "\n" . '<base href="' . Config::getInstallPath() . '" />';
+      if (file_exists($filename) === true and is_file($filename) === true and !file_exists($target)) {
+        $doc = file_get_contents($filename);
+        file_put_contents($target, str_replace('<head>', $basepath, $doc));
+        echo "\n File succesfully copied. \n";
+        return true;
+      } else {
+        header("Location: " . Config::getInstallPath());
+        return false;
+      }
+    }
+  }
+
+  public function mkdir() {
+    if ($this->isLoggedIn() === true) {
+      if (!isset($_POST['dirname']))
+        die("No directory name provided! \n");
+      (string) $newDirname = dirname(__FILE__) . "/" . $_POST['dirname'];
+      if (!file_exists($newDirname)) {
+        mkdir($newDirname, 0777);
+        echo "\n Directory created \n";
+      } else {
+        header("Location: " . Config::getInstallPath());
+      }
+    }
+  }
+
+}
+
+$server = new Server();
+switch ($server->get_action) {
+
+  case 'login':
+    $server->login();
+    $loginPage = new HtmlEntities();
+    echo $loginPage->getLoginPage();
+    break;
+
+  case 'logout':
+    $server->logout();
+    break;
+
+  case 'save':
+    $server->save();
+    break;
+
+  case 'isloggedin':
+    $server->isLoggedIn();
+    break;
+
+  case 'duplicate':
+    $server->duplicate();
+    break;
+
+  case 'mkdir':
+    $server->mkdir();
+    break;
+
+  default:
+    $errorPage = new HtmlEntities();
+    echo $errorPage->getErrorPage();
+    break;
+}
 ?>
-

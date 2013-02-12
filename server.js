@@ -120,10 +120,10 @@ app.post('/save', function (req, res) {
     var content = req.param('content', null);
     if (name && content) {
     	fs.writeFile(name, content, function (err) {
-		if (err) throw err;
-		console.log('It\'s saved!');
-		res.send("ok");
-	});
+            if (err) throw err;
+            console.log('It\'s saved!');
+            res.send("ok");
+        });
     }
 });
 
