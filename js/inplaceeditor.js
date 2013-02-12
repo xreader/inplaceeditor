@@ -1,9 +1,9 @@
 $(document).ready(function () {
 
-    var TEXT_MODE = "text";
-    var HTML_MODE = "html";
-    var NONE_MODE = "none";
-    var ADVANCED_HTML_MODE = "advanced";
+    const TEXT_MODE = "text";
+    const HTML_MODE = "html";
+    const NONE_MODE = "none";
+    const ADVANCED_HTML_MODE = "advanced";
     var EDITING_MODE = NONE_MODE;
     var SERVER_PATH = "http://localhost:3000/";
     var current = undefined;
@@ -19,6 +19,7 @@ $(document).ready(function () {
     var loginPath = pathPrefix + 'login';
     var logoutPath = pathPrefix + 'logout';
     var loginStatusPath = pathPrefix + 'isloggedin';
+    //define the selector (jquery syntax) where editing is possible
     const editable_container = 'body';
 
 
@@ -30,7 +31,7 @@ $(document).ready(function () {
         return InPlaceEditor;
     }
 
-    window.InPlaceEditor = window.InPlaceEditor || InPlaceEditor;
+    window.InPlaceEditor = window.InPlaceEditor  || InPlaceEditor;
 
     var stopHighlighting = function (selector) {
         $(selector).removeClass('editablearea');
@@ -41,7 +42,9 @@ $(document).ready(function () {
         var isEditorControls = $(selector).hasClass('editorControls');
         var closestEditorControls = $(selector).closest('.editorControls').find(selector);
         var isChildOfEditorControls = closestEditorControls !== undefined && closestEditorControls.length !== 0;
-        return  ( !isEditorControls && !isChildOfEditorControls );
+        var isChildOfBody = $(selector).parents(editable_container).length > 0;
+
+        return  ( !isEditorControls && !isChildOfEditorControls && isChildOfBody );
     };
 
     function stripX(str) {
@@ -79,16 +82,17 @@ $(document).ready(function () {
         $(document).click(function (event) {
             if (!isEditable(event.target)) return true;
             if ($(event.target).is('[contentEditable]')) return false;
-            if ($(event.target).parents('[contentEditable]').length !== 0) return false;
-            if (current && !$(event.target).is('[contentEditable]'))
+            if ($(event.target).parents('[contentEditable]').length != 0) return false;
+            if ( current )
                 InPlaceEditor.stopEditing();
             if ($(event.target).children().length > 0) {
                 EDITING_MODE = HTML_MODE;
                 fixCursorPosition();
             }
-            else EDITING_MODE = TEXT_MODE;
+            else EDITING_MODE = HTML_MODE;
             // activate edit mode
             $(event.target).attr('contentEditable', '');
+            InPlaceEditor.showToolbar();
             current = event.target;
             current.onpaste = function(e) {
                 console.log("onpaste..." + e.clipboardData.getData('text/plain') + "+");
@@ -103,6 +107,7 @@ $(document).ready(function () {
                 console.warn("current mode:" + ADVANCED_HTML_MODE);
                 return false;
             }
+            $('#toolbar').remove();
             current = event.target;
             $(current).html('<pre class="prettyprint" id="prettyprint">' + stripX($(current).html()) + '</pre>');
             prettyPrint();
@@ -131,6 +136,7 @@ $(document).ready(function () {
 
     function fixCursorPosition() {
         if (EDITING_MODE == ADVANCED_HTML_MODE) {
+            console.log("fixCursorPosition...");
             var el = document.getElementById("prettyprint");
             var range = document.createRange();
             var sel = window.getSelection();
@@ -183,9 +189,7 @@ $(document).ready(function () {
 
     var processKeyEvent = function (e) {
         console.log("key:" + e.keyCode);
-        if (e.keyCode === 27)
-            InPlaceEditor.stopEditing();
-        else if (e.keyCode === 37 || e.keyCode === 38 || e.keyCode === 39 || e.keyCode === 40) {
+        if (e.keyCode === 37 || e.keyCode === 38 || e.keyCode === 39 || e.keyCode === 40) {
             //cursor exited the edited area
             if ($(window.getSelection().anchorNode).parents('[contentEditable]').length === 0)
                 InPlaceEditor.stopEditing();
@@ -193,7 +197,7 @@ $(document).ready(function () {
             handleEnter(e);
         }
         return true;
-    };
+    }
 
     var clearPrettyPrintFormatting = function (parent) {
         var content = "";
@@ -212,10 +216,11 @@ $(document).ready(function () {
         console.log("content editable text content:" + $('[contenteditable]').text());
         $(current).removeAttr('contentEditable');
         $(current).parents().removeAttr('contentEditable');
+        $('#toolbar').remove();
         var content = EDITING_MODE === TEXT_MODE
             ? $(current).text() : EDITING_MODE === ADVANCED_HTML_MODE
             ? clearPrettyPrintFormatting(current) : $(current).html();
-        if (EDITING_MODE === HTML_MODE || EDITING_MODE === ADVANCED_HTML_MODE) {
+        if (EDITING_MODE == HTML_MODE || EDITING_MODE === ADVANCED_HTML_MODE) {
             content = content.split('&lt;').join('<');
             content = content.split('&gt;').join('>');
         }
@@ -237,15 +242,23 @@ $(document).ready(function () {
             $('head').append('<link rel="stylesheet" href="http://twitter.github.com/bootstrap/assets/js/google-code-prettify/prettify.css" type="text/css" />');
         if ($("script[src*='prettify.js']").length === 0)
             $('body').append('<script src="http://twitter.github.com/bootstrap/assets/js/google-code-prettify/prettify.js"/>');
+        //formatter
         if ($("script[src*='beautify-html.js']").length === 0)
             $('body').append('<script src="https://raw.github.com/einars/js-beautify/master/beautify-html.js"/>');
-    };
+        //file upload
+        if ($("link[href*='bootstrap-image-gallery.min.css']").length == 0)
+            $('head').append('<link rel="stylesheet" href="http://blueimp.github.com/Bootstrap-Image-Gallery/css/bootstrap-image-gallery.min.css">');
+        if ($("link[href*='jquery.fileupload-ui.css']").length == 0)
+            $('head').append('<link rel="stylesheet" href="http://blueimp.github.com/jQuery-File-Upload/css/jquery.fileupload-ui.css">');
+        if ($("link[href*='jquery-ui.css']").length == 0)
+            $('head').append('<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.0/themes/base/jquery-ui.css" />');
+    }
 
     InPlaceEditor.addControls = function() {
         if ($('.editorControls').length > 0) $('.editorControls').remove();
-        var controlsCss = ' style=" top: 50px; position: absolute; right: 18px; "';
-        $('body').append('<div class="editorControls" ' + controlsCss + '><button id="saveBtn" class="btn" >Save</button><button id="actionCopy" class="btn" >Copy</button> <button id="makeDirectory" class="btn" >New Folder</button></div></div>');
-        controlsCss = ' style=" bottom: 20px; position: absolute; right: 18px; "';
+        var controlsCss = ' style=" top: 50px; position: fixed; right: 18px; "';
+        $('body').append('<div class="editorControls" ' + controlsCss + '><button id="saveBtn" class="btn" >Save</button><button id="actionCopy" class="btn" >Copy</button> <button id="makeDirectory" class="btn" >New Folder</button><button id="actionNew" class="btn">New</button></div></div>');
+        controlsCss = ' style=" bottom: 20px; float: right; position: fixed; right: 18px; "';
         $('body').append('<div class="editorControls" ' + controlsCss + '><a href="' + logoutPath + '">Logout</div>');
         $('#saveBtn').click(function () {
             console.log("do save...");
@@ -260,22 +273,77 @@ $(document).ready(function () {
           InPlaceEditor.mkdir();
         });
         //add rollover style for highliting elements
-        $("<style type='text/css'> .editablearea { box-shadow: 0 0 10px hsl(212, 80%, 50%); outline: 1px solid hsla(206, 77%, 61%, 0.3); } </style>").appendTo("head");
-    };
+        $('#actionNew').click(function () {
+            console.log("call wizard...");
+            window.location = "/new.html";
+        });
+        //add rollover style for highliting elements & toolbar style
+        $("<style type='text/css'> .editablearea { box-shadow: 0 0 10px hsl(212, 80%, 50%); outline: 1px solid hsla(206, 77%, 61%, 0.3); } 	#toolbar { padding: 4px; display: inline-block; position: absolute; } /* support: IE7 */ *+html #toolbar { display: inline; }</style>").appendTo("head");
+    }
+
+    InPlaceEditor.showToolbar = function() {
+        var toolbarSrc = '<div id="toolbar" class="ui-widget-header ui-corner-all editorControls">' +
+            //'<button id="image">Image</button>' +
+            '<button data-tag="bold"><b>Bold</b></button>'+
+            '<button data-tag="italic"><em>Italic</em></button>'+
+            '<button data-tag="underline"><ins>Underline</ins></button>'+
+            '<button data-tag="strikeThrough"><del>Strike</del></button>'+
+//            '<button data-tag="insertUnorderedList">• Unordered List</button>'+
+//            '<button data-tag="insertOrderedList">1. Ordered List</button>'+
+            '<button data-tag="createLink"><ins style="color: blue;">Link</ins></button>'+
+            '<button data-tag="insertImage">Image</button>'+
+            '<button data-value="h1" data-tag="heading">H1</button>'+
+            '<button data-value="h2" data-tag="heading">H2</button><br />'+
+            '<button data-tag="removeFormat">Remove format</button>'
+            '</div>';
+        $(toolbarSrc).insertBefore('[contentEditable]');
+        var position = $('[contentEditable]').position().top - $('#toolbar').height()*1.3;
+        if (position < 10)
+            position = $('[contentEditable]').position().top + $('[contentEditable]').height();
+        $('#toolbar').css('top', position );
+        $('#toolbar').css('left', $('[contentEditable]').position().left);
+
+        $('#toolbar button').click(function (e) {
+            var tag = $(this).attr('data-tag');
+            switch(tag)
+            {
+                case 'createLink':
+                    var link = prompt('Please specify the link.');
+                    if(link) document.execCommand('createLink', false, link);
+                    break;
+                case 'insertImage':
+                    var src = prompt('Please specify the link of the image.');
+                    if(src) document.execCommand('insertImage', false, src);
+                    break;
+                case 'heading':
+                    try {
+                        document.execCommand('formatBlock', false, '<'+$(this).attr('data-value')+'>');
+                    } catch (e) {
+                        //The browser doesn't support "heading" command, we use an alternative
+                        document.execCommand(tag, false, $(this).attr('data-value'));
+                    }
+                    break;
+                default:
+                    document.execCommand($(this).attr('data-tag'), false, $(this).attr('data-value'));
+            }
+            e.preventDefault();
+            return false;
+        });
+    }
 
     InPlaceEditor.startEditing = function() {
         console.log("editing...." + EDITING_MODE);
         InPlaceEditor.addControls();
         InPlaceEditor.initMouesListeners();
         highlighting = true;
-    };
+    }
 
     var initialize = function () {
         console.log("initialize..." + window.InPlaceEditor);
         if (!window.InPlaceEditor) InPlaceEditor = new InPlaceEditor();
         InPlaceEditor.appendServiceStylesAndDependencies();
-        if (SERVER === 'DEMO') {
-            InPlaceEditor.startEditing();
+        if (SERVER == 'DEMO') {
+            InPlaceEditor.startEditing()
         } else {
             $.get(loginStatusPath, function (data) {
                 if ($.trim( data ) === 'true') {
@@ -291,7 +359,7 @@ $(document).ready(function () {
 
     InPlaceEditor.removeControls = function() {
         $('.editorControls').remove();
-    };
+    }
 
     InPlaceEditor.clearDutyCode = function() {
         $("[contentEditable]").removeAttr("contentEditable");
@@ -300,7 +368,7 @@ $(document).ready(function () {
         $("script[src*='ga.js']").remove();
         $("script#facebook-jssdk").remove();
         $("style:contains('.fb_')").remove();
-    };
+    }
 
     var getEntireHtml = function () {
         var node = document.doctype;
@@ -315,10 +383,10 @@ $(document).ready(function () {
     };
 
     InPlaceEditor.duplicate = function () {
-        //if ( SEVER == 'DEMO') return false;
+	if ( SERVER == 'DEMO') return false;
         var url = window.location.href;
         var filename = url.replace(SERVER_PATH, '') || 'index.html';
-        var target = window.prompt("Enter new name:", "");
+	var target = window.prompt("Enter new name:", "");
         if (target) {
             var data = {
                 from:filename,
@@ -348,10 +416,10 @@ $(document).ready(function () {
     };
 
     InPlaceEditor.saveChanges = function () {
-        if ( SERVER == 'DEMO') return false;
-          var url = window.location.href;
-          var filename = url.replace(SERVER_PATH, '') || 'index.html';
-          InPlaceEditor.removeControls();
+        if ( SERVER === 'DEMO') return false;
+        var url = window.location.href;
+        var filename = url.replace(SERVER_PATH, '') || 'index.html';
+        InPlaceEditor.removeControls();
         InPlaceEditor.clearDutyCode();
         var entireHtml = getEntireHtml();
         console.log("filename:" + filename);
@@ -359,8 +427,7 @@ $(document).ready(function () {
             name:filename,
             content:entireHtml
         };
-        console.log("savePath:" + savePath);
-        $.post(savePath, data, function (data) {
+        $.post(savePath, data,function (data) {
             console.log("saved: \n" + data);
             initialize();
         }).error(function (err) {

@@ -1,0 +1,11 @@
+[
+    {"name":"flexible","image":"img/flexible.png","template":"flexible"},
+    {"name":"1 col","image":"img/onecol.png","template":"onecol"},
+    {"name":"3 col 25x50x25","image":"img/threecol_25_50_25_stacked.png","template":"threecol_25_50_25_stacked"},
+    {"name":"3 col 25x50x25","image":"img/threecol_25_50_25.png","template":"threecol_25_50_25"},
+    {"name":"3 col 33x34x33","image":"img/threecol_33_34_33_stacked.png","template":"threecol_33_34_33_stacked"},
+    {"name":"3 col 33x34x33","image":"img/threecol_33_34_33.png","template":"threecol_33_34_33"},
+    {"name":"2 col bricks","image":"img/twocol_bricks.png","template":"twocol_bricks"},
+    {"name":"2 col stacked","image":"img/twocol_stacked.png","template":"twocol_stacked"},
+    {"name":"2 col","image":"img/twocol.png","template":"twocol"}
+]

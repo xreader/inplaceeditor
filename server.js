@@ -112,6 +112,30 @@ app.get('/isloggedin', function(req, res){
         res.send("false");
 });
 
+//create new page
+app.post('/create', function (req, res) {
+    console.log("saving:" + req.body.name);
+    if ( !req.isAuthenticated() ) {
+        res.send('not authenticated', 401);
+    }
+    var name = req.param('name', null);
+    var theme = req.param('theme', null);
+    var template = req.param('template', null);
+    if (name && theme && template) {
+        //read layout data
+        var layoutFile = 'data/layout/' + template + '.html';
+        fs.readFile( layoutFile, function (err, data) {
+            data = data.toString().replace('$bootstrap_css$', theme.css);
+            if (err) throw err;
+            fs.writeFile(name, data, function (err) {
+                if (err) throw err;
+                console.log('page created!');
+                res.send("ok");
+            });
+            console.log(data);
+        });
+    }
+});
 //save changes
 app.post('/save', function (req, res) {
     console.log("saving:" + req.body.name);
