@@ -275,7 +275,7 @@ $(document).ready(function () {
         //add rollover style for highliting elements
         $('#actionNew').click(function () {
             console.log("call wizard...");
-            window.location = "/new.html";
+            window.location = "new.html";
         });
         //add rollover style for highliting elements & toolbar style
         $("<style type='text/css'> .editablearea { box-shadow: 0 0 10px hsl(212, 80%, 50%); outline: 1px solid hsla(206, 77%, 61%, 0.3); } 	#toolbar { padding: 4px; display: inline-block; position: absolute; } /* support: IE7 */ *+html #toolbar { display: inline; }</style>").appendTo("head");
