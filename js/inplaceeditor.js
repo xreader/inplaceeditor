@@ -1,16 +1,16 @@
 $(document).ready(function () {
 
-    const TEXT_MODE = "text";
-    const HTML_MODE = "html";
-    const NONE_MODE = "none";
-    const ADVANCED_HTML_MODE = "advanced";
+    var TEXT_MODE = "text";
+    var HTML_MODE = "html";
+    var NONE_MODE = "none";
+    var ADVANCED_HTML_MODE = "advanced";
     var EDITING_MODE = NONE_MODE;
-    var SERVER_PATH = "http://localhost:3000/";
+    var SERVER_PATH = "http://localhost/~talbot/inplaceeditor/";
     var current = undefined;
     var highlighting = true;
 
     //modes PHP, NODE, DEMO
-    var SERVER = 'NODE';
+    var SERVER = 'PHP';
     var pathPrefix = SERVER === 'PHP' ? SERVER_PATH + 'server.php?action=' : '/';
 
     var savePath = pathPrefix + 'save';
@@ -20,7 +20,7 @@ $(document).ready(function () {
     var logoutPath = pathPrefix + 'logout';
     var loginStatusPath = pathPrefix + 'isloggedin';
     //define the selector (jquery syntax) where editing is possible
-    const editable_container = 'body';
+    var editable_container = 'body';
 
 
     console.log("########################################");
