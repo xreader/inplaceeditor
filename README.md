@@ -33,11 +33,20 @@ PHP instructions
 ----------------
 just edit js/inplaceeditor.js and change
 
-`const SEVER = 'NODE';`
+`var SEVER = 'NODE';`
 
 to
 
-`const SEVER = 'PHP';`
+`var SEVER = 'PHP';`
+
+change admin user and password and host name in config.inc
+
+  `private static $ADMIN_USER = 'admin';`
+  
+  `private static $ADMIN_PASSWORD = 'secret';`
+  
+  `private static $INSTALLATION_BASEPATH = 'http://localhost/';`
+
 
 Node.js instructions
 --------------------
