@@ -25,7 +25,7 @@
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
 
-  <link rel="stylesheet" href="http://twitter.github.com/bootstrap/assets/js/google-code-prettify/prettify.css" type="text/css"></head><body class="" style="zoom: 1;"><div class="navbar navbar-fixed-top">
+  <link rel="stylesheet" href="http://twitter.github.com/bootstrap/assets/js/google-code-prettify/prettify.css" type="text/css"><link rel="stylesheet" href="http://blueimp.github.com/Bootstrap-Image-Gallery/css/bootstrap-image-gallery.min.css"><link rel="stylesheet" href="http://blueimp.github.com/jQuery-File-Upload/css/jquery.fileupload-ui.css"><link rel="stylesheet" href="http://code.jquery.com/ui/1.10.0/themes/base/jquery-ui.css"></head><body class="" style="zoom: 1;"><div class="navbar navbar-fixed-top">
     <div class="navbar-inner">
         <div class="container">
             <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse"> <span class="icon-bar"></span>
@@ -95,47 +95,48 @@
 <!-- Example row of columns -->
 <div class="row"><div class="span5"><a href="https://github.com/xreader/inplaceeditor/archive/master.zip" class="btn btn-success btn-large">Download InlineEditor</a></div></div>
 <div class="row">
-    <div class="span9">
-         <h3 class="">Usage example</h3> 
-        <p class="">getting html5 boilerplate bootstrap template</p>
+    <div class="span9"> <h3 class="">Usage example</h3> 
+<p class="">getting html5 boilerplate bootstrap template</p>
 <code class="">git clone https://github.com/verekia/initializr-bootstrap.git
 
 cd initializr-bootstrap </code>
 
-        <p class="">getting inplace editor</p>
-        <p class=""><code class="">git clone https://github.com/xreader/inplaceeditor.git</code>
+<p class="">getting inplace editor</p>
+<p class=""><code class="">git clone https://github.com/xreader/inplaceeditor.git</code>
 
-        </p>
-        <p class=""><code class="">cp -r inplaceeditor/* .</code>
+</p>
+<p class=""><code class="">cp -r inplaceeditor/* .</code>
 
-        </p>
-        <p class=""><code class="">rm -rf inplaceeditor</code>
+</p>
+<p class=""><code class="">rm -rf inplaceeditor</code>
 
-        </p>
-        <p class="">add inplaceeditor to index.html template before</p>
-        <p class="">
-            <img src="images/inplaceeditor.png" class="">
-        </p>
-         <h3 class="">PHP instructions</h3>
+</p>
+<p class="">add inplaceeditor to index.html template before</p>
+<p class="">
+    <img src="images/inplaceeditor.png" class="">
+</p>
+ <h3 class="">PHP instructions</h3>
 
-        <p class="">just edit js/inplaceeditor.js and change</p>
-<code class="">const SERVER = 'NODE'; to const SERVER = 'PHP'; </code>
+<p class="">just edit js/inplaceeditor.js and change</p>
+<code class="">var SERVER = 'NODE'; to var SERVER = 'PHP'; </code>
 
-        <h3 class="">Node.js instructions</h3>
-            <p class="">before starting the server node.js dependencies (conect &amp; express)
-                shold be installed</p>
+    <p class="">Change admin name and password in config.inc</p>
+<code class="">private static $ADMIN_USER = 'admin';
+<br>private static $ADMIN_PASSWORD = 'secret'; <br>private static $INSTALLATION_BASEPATH = 'http://localhost/';</code>
+<h3 class="">Node.js instructions</h3>
+
+<p class="">before starting the server node.js dependencies (conect &amp; express) shold be installed</p>
 <code class="">npm i</code>
 
-            <p class="">now local server can be started</p>
+<p class="">now local server can be started</p>
 <code>node server.js</code>
 
-            <p class="">navigate to
-                <a href="http://localhost:3000">http://localhost:3000</a>
-            </p>
-            <p class=""><strong class="">You can edit the entire HTML page now!</strong>
+<p class="">navigate to
+    <a href="http://localhost:3000">http://localhost:3000</a>
+</p>
+<p class=""><strong class="">You can edit the entire HTML page now!</strong>
 
-            </p>
-    </div>
+</p></div>
     <div class="span3">
 
     <h4 class="">Support developers</h4>
@@ -222,6 +223,7 @@ cd initializr-bootstrap </code>
 <script src="js/inplaceeditor.js"></script>
 <script src="http://twitter.github.com/bootstrap/assets/js/google-code-prettify/prettify.js"></script>
 <script src="https://raw.github.com/einars/js-beautify/master/beautify-html.js"></script>
+
 
 
 </body></html>
