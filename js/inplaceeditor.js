@@ -10,7 +10,7 @@ $(document).ready(function () {
     var highlighting = true;
 
     //modes PHP, NODE, DEMO
-    var SERVER = 'DEMO';
+    var SERVER = 'NODE';
     var pathPrefix = SERVER === 'PHP' ? SERVER_PATH + 'server.php?action=' : '/';
 
     var savePath = pathPrefix + 'save';
