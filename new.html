@@ -1,0 +1,175 @@
+<!doctype html>
+<!--[if lt IE 8]> <html class="no-js ie7 oldie" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js ie8 oldie" lang="en"> <![endif]-->
+<!--[if IE 9]>    <html class="no-js ie9 oldie" lang="en"> <![endif]-->
+<!--[if gt IE 9]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+	<title></title>
+	<meta name="description" content="">
+	<meta name="author" content="">
+
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+
+    <link rel="stylesheet" href="css/bootstrap.css">
+	<style>
+	body {
+	  padding-top: 60px;
+	  padding-bottom: 40px;
+	}
+	</style>
+    <link rel="stylesheet" href="css/bootstrap-responsive.css">
+    <link rel="stylesheet" href="css/style.css">
+    
+<!-- 	<link rel="stylesheet/less" href="less/style.less"> -->
+<!-- 	<script src="js/libs/less-1.2.1.min.js"></script>  -->
+
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+    <!--div class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <a class="brand" href="#">Project name</a>
+          <div class="nav-collapse">
+            <ul class="nav">
+              <li class="active"><a href="#">Home</a></li>
+              <li><a href="#about">About</a></li>
+              <li><a href="#contact">Contact</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div-->
+
+    <div class="container">
+        <h1>Page builder</h1>
+        <h2>Provide page name, select theme and layout...</h2>
+      <!-- Main hero unit for a primary marketing message or call to action -->
+      <!--div class="hero-unit">
+        <h1>Hello, world!</h1>
+        <p>This is a template for a simple marketing or informational website. It includes a large callout called the hero unit and three supporting pieces of content. Use it as a starting point to create something more unique.</p>
+        <p><a class="btn btn-primary btn-large">Learn more &raquo;</a></p>
+      </div-->
+
+        <form>
+            <fieldset>
+            <legend>Name:</legend>
+            <input id="name" class="span4" type="text" placeholder="Page name...">
+            <legend>Layout:</legend>
+            <div id="layouts"></div>
+            <legend>Theme:</legend>
+            <div id="themes"></div>
+                <a class="btn btn-large btn-primary pull-right" id="createBtn">Create</a>
+            </fieldset>
+        </form>
+      <hr>
+
+      <footer>
+        <p>&copy; Company 2012</p>
+      </footer>
+
+    </div> <!-- /container -->
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="js/libs/jquery-1.7.1.min.js"><\/script>')</script>
+
+<script src="js/libs/bootstrap/bootstrap-transition.js"></script>
+<script src="js/libs/bootstrap/bootstrap-collapse.js"></script>
+
+<script src="js/script.js"></script>
+<script>
+	var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']]; // Change UA-XXXXX-X to be your site's ID
+	(function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];g.async=1;
+	g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+	s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+
+<!--[if lt IE 7 ]>
+	<script src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.2/CFInstall.min.js"></script>
+	<script>window.attachEvent("onload",function(){CFInstall.check({mode:"overlay"})})</script>
+<![endif]-->
+    <!--script src="js/inplaceeditor.js"></script-->
+    <script>
+        //build layout selector
+        $.getJSON('data/layout/layout.json', function(data) {
+            var items = [];
+
+            $.each(data, function(key, val) {
+                //items.push('<li id="' + key + '">' + val + '</li>');
+                items.push('<li class="span2">' +
+                            '<div class="thumbnail">' +
+                                '<img src="' + val.image +  '">' +
+                                '<div class="caption">' +
+                                '   <input type="radio" name="template" value="' + val.template +  '"> <b>' + val.name +  '</b>' +
+                                '</div>' +
+                            '</div>' +
+                        '</li>');
+            });
+            $('<ul/>', {
+                'class': 'thumbnails',
+                html: items.join('')
+            }).appendTo('#layouts');
+
+        });
+        //build themes selector
+        $.getJSON("http://api.bootswatch.com", function (data) {
+            window.themesData = data;
+            var items = [];
+
+            $.each(data.themes, function(key, val) {
+                //items.push('<li id="' + key + '">' + val + '</li>');
+                items.push('<li class="span2">' +
+                            '<div class="thumbnail">' +
+                                '<img src="' + val.thumbnail +  '">' +
+                                '<div class="caption">' +
+                                '   <input type="radio" name="theme" value="' + val.name +  '"> <b>' + val.name +  '</b>' +
+                                //'<p>' + val.description + '</p>' +
+                                '</div>' +
+                            '</div>' +
+                        '</li>');
+            });
+            $('<ul/>', {
+                'class': 'thumbnails',
+                html: items.join('')
+            }).appendTo('#themes');
+
+        });
+
+        $('#createBtn').click(function () {
+            var theme = $('[name=theme]:checked').val();
+            var selectedTheme = undefined;
+            $.each(window.themesData.themes, function(i, v) {
+                if (v.name == theme) {
+                    selectedTheme = v;
+                    return;
+                }
+            });
+            var data = {
+                name:$('#name').val(),
+                template:$('[name=template]:checked').val(),
+                theme:selectedTheme
+            };
+            $.post('create', data, function (data) {
+                console.log("saved:" + data);
+                window.location = $('#name').val();
+            }).error(function (err) {
+                console.log("error" + err);
+                if (err.status == 401)
+                    window.location = "/login";
+            });
+        });
+    </script>
+
+  </body>
+</html>
