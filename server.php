@@ -98,6 +98,30 @@ class Server {
     }
   }
 
+  public function create() {
+    if ($this->isLoggedIn() === TRUE) {
+      echo 'Start debugging';
+      if (!isset($_POST['name']) or !isset($_POST['template']) or !isset($_POST['theme']))
+        die('No filename provided!');
+
+      echo "Post values privided";
+
+      (string) $target = dirname(__FILE__) . "/" . $_POST['name'];
+      (string) $filename = 'data/layout/' . $_POST['template'] . '.html';
+      (string) $theme = $_POST['theme']['cssMin'];
+      (string) $basepath = '<head>' . "\n" . '<base href="' . Config::getInstallPath() . '" />';
+      if (file_exists($filename) === true and is_file($filename) === true and !file_exists($target)) {
+        $doc = file_get_contents($filename);
+        file_put_contents($target, str_replace('<head>', $basepath, str_replace('$bootstrap_css$', $theme, $doc)));
+        echo 'HTML Written';
+        return TRUE;
+      } else {
+        header("Location: " . Config::getInstallPath());
+        return FALSE;
+      }
+    }
+  }
+
 }
 
 $server = new Server();
@@ -127,6 +151,10 @@ switch ($server->get_action) {
 
   case 'mkdir':
     $server->mkdir();
+    break;
+
+  case 'create':
+    $server->create();
     break;
 
   default:
