@@ -19,7 +19,7 @@ class Server {
 
   public function login() {
     if (!empty($_POST['username']) and !empty($_POST['password'])) {
-      if ($_POST['username'] === Config::getUser() and $_POST['password'] === Config::getPassword()) {
+      if ($_POST['username'] === Config::getUser() and sha1('#1_' . $_POST["password"] . '+%6') === Config::getPassword()) {
         session_start();
         (string) $_SESSION['user'] = $_POST['username'];
         header("Location: " . Config::getInstallPath());

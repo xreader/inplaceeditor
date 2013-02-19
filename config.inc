@@ -16,7 +16,8 @@ class Config {
    * Localhost by default.
    */
   private static $ADMIN_USER = 'admin';
-  private static $ADMIN_PASSWORD = 'secret';
+  // SHA-1 Hash for secret
+  private static $ADMIN_PASSWORD = '25d563e27fea7bd403527fdbb64b6727fd0c853c';
   private static $INSTALLATION_BASEPATH = 'http://localhost/~talbot/inplaceeditor/';
 
   /**

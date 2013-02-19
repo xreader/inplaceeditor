@@ -24,7 +24,7 @@ $(document).ready(function () {
 
 
     console.log("########################################");
-    console.log("########## InPlaceEditor v.0.1.3 #######");
+    console.log("########## InPlaceEditor v.0.1.4 #######");
     console.log("########################################");
 
     function InPlaceEditor() {
@@ -385,6 +385,7 @@ $(document).ready(function () {
     InPlaceEditor.duplicate = function () {
 	if ( SERVER == 'DEMO') return false;
         var url = window.location.href;
+        url = url.replace('#', '');
         var filename = url.replace(SERVER_PATH, '') || 'index.html';
 	var target = window.prompt("Enter new name:", "");
         if (target) {
@@ -418,6 +419,7 @@ $(document).ready(function () {
     InPlaceEditor.saveChanges = function () {
         if ( SERVER === 'DEMO') return false;
         var url = window.location.href;
+        url = url.replace('#', '');
         var filename = url.replace(SERVER_PATH, '') || 'index.html';
         InPlaceEditor.removeControls();
         InPlaceEditor.clearDutyCode();
