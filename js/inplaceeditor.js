@@ -1,11 +1,11 @@
 $(document).ready(function () {
 
-    const TEXT_MODE = "text";
-    const HTML_MODE = "html";
-    const NONE_MODE = "none";
-    const ADVANCED_HTML_MODE = "advanced";
+    var TEXT_MODE = "text";
+    var HTML_MODE = "html";
+    var NONE_MODE = "none";
+    var ADVANCED_HTML_MODE = "advanced";
     var EDITING_MODE = NONE_MODE;
-    var SERVER_PATH = "http://localhost:3000/";
+    var SERVER_PATH = "http://localhost/";
     var current = undefined;
     var highlighting = true;
 
@@ -20,11 +20,11 @@ $(document).ready(function () {
     var logoutPath = pathPrefix + 'logout';
     var loginStatusPath = pathPrefix + 'isloggedin';
     //define the selector (jquery syntax) where editing is possible
-    const editable_container = 'body';
+    var editable_container = 'body';
 
 
     console.log("########################################");
-    console.log("########## InPlaceEditor v.0.1.3 #######");
+    console.log("########## InPlaceEditor v.0.1.4 #######");
     console.log("########################################");
 
     function InPlaceEditor() {
@@ -385,6 +385,7 @@ $(document).ready(function () {
     InPlaceEditor.duplicate = function () {
 	if ( SERVER == 'DEMO') return false;
         var url = window.location.href;
+        url = url.replace('#', '');
         var filename = url.replace(SERVER_PATH, '') || 'index.html';
 	var target = window.prompt("Enter new name:", "");
         if (target) {
@@ -418,6 +419,7 @@ $(document).ready(function () {
     InPlaceEditor.saveChanges = function () {
         if ( SERVER === 'DEMO') return false;
         var url = window.location.href;
+        url.indexOf('#') > 0 ? url = url.slice(0, url.indexOf('#')) : url;
         var filename = url.replace(SERVER_PATH, '') || 'index.html';
         InPlaceEditor.removeControls();
         InPlaceEditor.clearDutyCode();
