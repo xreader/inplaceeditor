@@ -5,12 +5,12 @@ $(document).ready(function () {
     var NONE_MODE = "none";
     var ADVANCED_HTML_MODE = "advanced";
     var EDITING_MODE = NONE_MODE;
-    var SERVER_PATH = "http://localhost/~talbot/inplaceeditor/";
+    var SERVER_PATH = "http://localhost/";
     var current = undefined;
     var highlighting = true;
 
     //modes PHP, NODE, DEMO
-    var SERVER = 'PHP';
+    var SERVER = 'NODE';
     var pathPrefix = SERVER === 'PHP' ? SERVER_PATH + 'server.php?action=' : '/';
 
     var savePath = pathPrefix + 'save';

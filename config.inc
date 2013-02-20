@@ -18,7 +18,7 @@ class Config {
   private static $ADMIN_USER = 'admin';
   // SHA-1 Hash for secret
   private static $ADMIN_PASSWORD = '25d563e27fea7bd403527fdbb64b6727fd0c853c';
-  private static $INSTALLATION_BASEPATH = 'http://localhost/~talbot/inplaceeditor/';
+  private static $INSTALLATION_BASEPATH = 'http://localhost/';
 
   /**
    * Simple static getters for config.
