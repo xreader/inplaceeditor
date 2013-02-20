@@ -419,7 +419,7 @@ $(document).ready(function () {
     InPlaceEditor.saveChanges = function () {
         if ( SERVER === 'DEMO') return false;
         var url = window.location.href;
-        url = url.replace('#', '');
+        url.indexOf('#') > 0 ? url = url.slice(0, url.indexOf('#')) : url;
         var filename = url.replace(SERVER_PATH, '') || 'index.html';
         InPlaceEditor.removeControls();
         InPlaceEditor.clearDutyCode();
