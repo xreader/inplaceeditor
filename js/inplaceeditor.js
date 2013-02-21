@@ -5,7 +5,7 @@ $(document).ready(function () {
     var NONE_MODE = "none";
     var ADVANCED_HTML_MODE = "advanced";
     var EDITING_MODE = NONE_MODE;
-    var SERVER_PATH = "http://localhost/";
+    var SERVER_PATH = "http://localhost:3000/";
     var current = undefined;
     var highlighting = true;
 
@@ -383,10 +383,14 @@ $(document).ready(function () {
     };
 
     InPlaceEditor.duplicate = function () {
-	if ( SERVER == 'DEMO') return false;
+	if ( SERVER == 'DEMO' ) return false;
         var url = window.location.href;
-        url = url.replace('#', '');
-        var filename = url.replace(SERVER_PATH, '') || 'index.html';
+	//the source file for NODE will be deterinated at server side 
+	var filename = url;
+	if ( SERVER == 'PHP' ) {
+		url = url.replace('#', '');
+		filename = url.replace(SERVER_PATH, '') || 'index.html';
+	}
 	var target = window.prompt("Enter new name:", "");
         if (target) {
             var data = {

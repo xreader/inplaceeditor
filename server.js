@@ -155,7 +155,13 @@ app.post('/duplicate', function (req, res) {
     console.log("duplicate:" + req.body.from + "/" + req.body.to);
     if ( !req.isAuthenticated() ) return false;
     if ( req.body.from && req.body.to ) {
-	    fs.readFile( req.body.from, function (err, data) {
+        var from = req.body.from;
+        var parsedUrl = url.parse( req.body.from );
+        from = parsedUrl.path.toString().replace('#', '');
+        from = from == '\/'?'':from;
+        var from = from || 'index.html';
+
+        fs.readFile( from, function (err, data) {
 		if (err) throw err;
 		fs.writeFile(req.body.to, data, function (err) {
 		    if (err) throw err;
