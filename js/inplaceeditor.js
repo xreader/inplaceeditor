@@ -76,6 +76,7 @@ $(document).ready(function () {
         });
         $(document).mouseover(function (event) {
             //console.log("mouse overe MODE check:" + EDITING_MODE);
+	    //console.log("Mouse Over:" + highlighting +"isEditable:"+isEditable(event.target)+  ",EDITING_MODE:" + EDITING_MODE);
             if (highlighting && isEditable(event.target) && EDITING_MODE == NONE_MODE )
                 $(event.target).addClass('editablearea');
         });
@@ -225,7 +226,7 @@ $(document).ready(function () {
             content = content.split('&gt;').join('>');
         }
         console.log("new value:" + content);
-        if ($(current).parents('body').length == 0 ) {
+        if (current && $(current).parents('body').length == 0 ) {
             $(document).unbind('click');
             $(document).unbind('dblclick');
             $(document).unbind('mouseover');
@@ -256,7 +257,7 @@ $(document).ready(function () {
 
     InPlaceEditor.addControls = function() {
         if ($('.editorControls').length > 0) $('.editorControls').remove();
-        var controlsCss = ' style=" top: 50px; position: fixed; right: 18px; "';
+        var controlsCss = ' style=" bottom: 16px; position: fixed; right: 84px; "';
         $('body').append('<div class="editorControls" ' + controlsCss + '><button id="saveBtn" class="btn" >Save</button><button id="actionCopy" class="btn" >Copy</button> <button id="makeDirectory" class="btn" >New Folder</button><button id="actionNew" class="btn">New</button></div></div>');
         controlsCss = ' style=" bottom: 20px; float: right; position: fixed; right: 18px; "';
         $('body').append('<div class="editorControls" ' + controlsCss + '><a href="' + logoutPath + '">Logout</div>');
@@ -424,9 +425,16 @@ $(document).ready(function () {
         if ( SERVER === 'DEMO') return false;
         var url = window.location.href;
         url.indexOf('#') > 0 ? url = url.slice(0, url.indexOf('#')) : url;
-        var filename = url.replace(SERVER_PATH, '') || 'index.html';
+	var filename = url;
+	if ( SERVER === 'PHP' ) 
+		filename = url.replace(SERVER_PATH, '') || 'index.html';
         InPlaceEditor.removeControls();
         InPlaceEditor.clearDutyCode();
+	//lightbox fix
+	var lightboxOverlay = $('#lightboxOverlay')[0];
+	$('#lightboxOverlay').remove();
+	var lightbox = $('#lightbox')[0];
+	$('#lightbox').remove();
         var entireHtml = getEntireHtml();
         console.log("filename:" + filename);
         var data = {
@@ -436,6 +444,8 @@ $(document).ready(function () {
         $.post(savePath, data,function (data) {
             console.log("saved: \n" + data);
             initialize();
+	    $("body").append(lightboxOverlay);
+	    $("body").append(lightbox);
         }).error(function (err) {
             console.log("error" + err);
         });
