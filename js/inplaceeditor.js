@@ -94,12 +94,11 @@ $(document).ready(function () {
             // activate edit mode
             $(event.target).attr('contentEditable', '');
             InPlaceEditor.showToolbar();
+			/*
+			if (current) 
+				$(current).unbind('onpaste');
+			*/
             current = event.target;
-            current.onpaste = function(e) {
-                console.log("onpaste..." + e.clipboardData.getData('text/plain') + "+");
-                InPlaceEditor.insertTextAtCursor( e.clipboardData.getData('text/plain') );
-                return false; // to prevent user insert
-            }
             stopHighlighting(event.target);
         });
         $(document).dblclick(function (event) {
@@ -123,6 +122,14 @@ $(document).ready(function () {
                 InPlaceEditor.stopEditing();
             return false;
         });
+		
+        document.onpaste = function(e) {
+            if (!isEditable( current )) return true;
+            console.log("onpaste..." + e.clipboardData.getData('text/plain') + "+");
+			InPlaceEditor.insertTextAtCursor( e.clipboardData.getData('text/plain') );
+            return false; // to prevent user insert
+        }
+		
 //
 //        $(document).keypress(function (e) {
 //            processKeyEvent(e);
@@ -214,7 +221,6 @@ $(document).ready(function () {
 
     InPlaceEditor.stopEditing = function () {
         console.log("stop editing....");
-        console.log("content editable text content:" + $('[contenteditable]').text());
         $(current).removeAttr('contentEditable');
         $(current).parents().removeAttr('contentEditable');
         $('#toolbar').remove();
@@ -231,7 +237,15 @@ $(document).ready(function () {
             $(document).unbind('dblclick');
             $(document).unbind('mouseover');
             $(document).unbind('mouseout');
+            $(document).unbind('onpaste');
+			console.log(document.onpaste);
+            document.onpaste = null;
+			console.log(document.onpaste);
         }
+		/*if ( current ) {
+			console.log("unbinding onpaste");
+			$(current).unbind('onpaste');
+		}*/
         $(current).html(content);
         highlighting = true;
         EDITING_MODE = NONE_MODE;
