@@ -10,7 +10,7 @@ $(document).ready(function () {
     var highlighting = true;
 
     //modes PHP, NODE, DEMO
-    var SERVER = 'NODE';
+    var SERVER = 'DEMO';
     var pathPrefix = SERVER === 'PHP' ? SERVER_PATH + 'server.php?action=' : '/';
 
     var savePath = pathPrefix + 'save';
@@ -267,14 +267,17 @@ $(document).ready(function () {
             $('head').append('<link rel="stylesheet" href="http://blueimp.github.com/jQuery-File-Upload/css/jquery.fileupload-ui.css">');
         if ($("link[href*='jquery-ui.css']").length == 0)
             $('head').append('<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.0/themes/base/jquery-ui.css" />');
+        if ($("script[src*='bootstrap-dropdown.js']").length == 0)
+	    $('body').append('<script src="http://dasapp.net/js/libs/bootstrap/bootstrap-dropdown.js"/>');
     }
 
     InPlaceEditor.addControls = function() {
         if ($('.editorControls').length > 0) $('.editorControls').remove();
-        var controlsCss = ' style=" bottom: 16px; position: fixed; right: 84px; "';
-        $('body').append('<div class="editorControls" ' + controlsCss + '><button id="saveBtn" class="btn" >Save</button><button id="actionCopy" class="btn" >Copy</button> <button id="makeDirectory" class="btn" >New Folder</button><button id="actionNew" class="btn">New</button></div></div>');
+        var controlsCss = ' style=" bottom: 16px; position: fixed; right: 16px; "';
+        //$('body').append('<div class="editorControls" ' + controlsCss + '><button id="saveBtn" class="btn" >Save</button><button id="actionCopy" class="btn" >Copy</button> <button id="makeDirectory" class="btn" >New Folder</button><button id="actionNew" class="btn">New</button><button id="actionEditDetails" class="btn">Page editor</button></div></div>');
+	$('body').append('<div class="editorControls"' + controlsCss + '><div class="btn-group dropup"> <button class="btn primary"><i class="icon-cogs"></i> Settings</a> </button> <button class="btn primary dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button> <ul class="dropdown-menu pull-right"> <li><a id="saveBtn" >Save</></li> <li><a id="actionCopy" >Copy</a></li> <li><a id="makeDirectory">New folder</a></li><li><a id="actionNew">New</a></li> <li class="divider"></li> <li><a id="actionEditDetails">Page editor</a></li><li class="divider"></li> <li><a href="' + logoutPath + '">Logout</a></li> </ul> </div></div>');
         controlsCss = ' style=" bottom: 20px; float: right; position: fixed; right: 18px; "';
-        $('body').append('<div class="editorControls" ' + controlsCss + '><a href="' + logoutPath + '">Logout</div>');
+        //$('body').append('<div class="editorControls" ' + controlsCss + '><a href="' + logoutPath + '">Logout</div>');
         $('#saveBtn').click(function () {
             console.log("do save...");
             InPlaceEditor.saveChanges();
@@ -292,6 +295,13 @@ $(document).ready(function () {
             console.log("call wizard...");
             window.location = "new.html";
         });
+        $('#actionEditDetails').click(function () {
+            console.log("call page editor...");
+            window.location = "/pageeditor";
+        });
+	$('.dropdown-toggle').click( function () {
+		$('.dropdown-toggle').dropdown();
+	});
         //add rollover style for highliting elements & toolbar style
         $("<style type='text/css'> .editablearea { box-shadow: 0 0 10px hsl(212, 80%, 50%); outline: 1px solid hsla(206, 77%, 61%, 0.3); } 	#toolbar { padding: 4px; display: inline-block; position: absolute; } /* support: IE7 */ *+html #toolbar { display: inline; }</style>").appendTo("head");
     }
