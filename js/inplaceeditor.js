@@ -259,7 +259,7 @@ $(document).ready(function () {
             $('body').append('<script src="http://twitter.github.com/bootstrap/assets/js/google-code-prettify/prettify.js"/>');
         //formatter
         if ($("script[src*='beautify-html.js']").length === 0)
-            $('body').append('<script src="https://raw.github.com/einars/js-beautify/master/beautify-html.js"/>');
+            $('body').append('<script src="https://raw.github.com/einars/js-beautify/master/js/lib/beautify-html.js"/>');
         //file upload
         if ($("link[href*='bootstrap-image-gallery.min.css']").length == 0)
             $('head').append('<link rel="stylesheet" href="http://blueimp.github.com/Bootstrap-Image-Gallery/css/bootstrap-image-gallery.min.css">');
