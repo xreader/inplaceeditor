@@ -374,8 +374,9 @@ $(document).ready(function () {
                 if ($.trim( data ) === 'true') {
                     InPlaceEditor.startEditing();
                 } else {
-                    //var controlsCss = ' style=" bottom: 20px; float: right; position: fixed; right: 18px; "';
-                    //$('body').append('<div class="editorControls" ' + controlsCss + '><a href="' + loginPath + '">Admin</div>');
+               	    $('.editorControls').remove();
+                    var controlsCss = ' style=" bottom: 20px; float: right; position: fixed; right: 18px; "';
+                    $('body').append('<div class="editorControls" ' + controlsCss + '><a href="' + loginPath + '">Admin</div>');
                     highlighting = false;
                 }
             });
