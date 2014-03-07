@@ -10,7 +10,7 @@ $(document).ready(function () {
     var highlighting = true;
 
     //modes PHP, NODE, DEMO
-    var SERVER = 'DEMO';
+    var SERVER = 'NODE';
     var pathPrefix = SERVER === 'PHP' ? SERVER_PATH + 'server.php?action=' : '/';
 
     var savePath = pathPrefix + 'save';
@@ -209,6 +209,7 @@ $(document).ready(function () {
 
     var clearPrettyPrintFormatting = function (parent) {
         var content = "";
+	//prettyprint
         if ($(parent).find(".prettyprint").children().length === 0)
             content = $(parent).html();
         else
@@ -268,14 +269,14 @@ $(document).ready(function () {
         if ($("link[href*='jquery-ui.css']").length == 0)
             $('head').append('<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.0/themes/base/jquery-ui.css" />');
         if ($("script[src*='bootstrap-dropdown.js']").length == 0)
-	    $('body').append('<script src="http://dasapp.net/js/libs/bootstrap/bootstrap-dropdown.js"/>');
+	    $('body').append('<script src="js/libs/bootstrap/bootstrap-dropdown.js"/>');
     }
 
     InPlaceEditor.addControls = function() {
         if ($('.editorControls').length > 0) $('.editorControls').remove();
         var controlsCss = ' style=" bottom: 16px; position: fixed; right: 16px; "';
         //$('body').append('<div class="editorControls" ' + controlsCss + '><button id="saveBtn" class="btn" >Save</button><button id="actionCopy" class="btn" >Copy</button> <button id="makeDirectory" class="btn" >New Folder</button><button id="actionNew" class="btn">New</button><button id="actionEditDetails" class="btn">Page editor</button></div></div>');
-	$('body').append('<div class="editorControls"' + controlsCss + '><div class="btn-group dropup"> <button class="btn primary"><i class="icon-cogs"></i> Settings</a> </button> <button class="btn primary dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button> <ul class="dropdown-menu pull-right"> <li><a id="saveBtn" >Save</></li> <li><a id="actionCopy" >Copy</a></li> <li><a id="makeDirectory">New folder</a></li><li><a id="actionNew">New</a></li> <li class="divider"></li> <li><a id="actionEditDetails">Page editor</a></li><li class="divider"></li> <li><a href="' + logoutPath + '">Logout</a></li> </ul> </div></div>');
+	$('body').append('<div class="editorControls"' + controlsCss + '><div class="btn-group dropup"> <button class="btn primary"><i class="icon-cogs"></i> Settings</a> </button> <button class="btn primary dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button> <ul class="dropdown-menu pull-right"> <li><a id="saveBtn" >Save</></li> <!--li><a id="actionCopy" >Copy</a></li> <li><a id="makeDirectory">New folder</a></li><li><a id="actionNew">New</a></li--> <li class="divider"></li> <li><a id="actionEditDetails">Page editor</a></li><li class="divider"></li> <li><a href="' + logoutPath + '">Logout</a></li> </ul> </div></div>');
         controlsCss = ' style=" bottom: 20px; float: right; position: fixed; right: 18px; "';
         //$('body').append('<div class="editorControls" ' + controlsCss + '><a href="' + logoutPath + '">Logout</div>');
         $('#saveBtn').click(function () {
@@ -309,6 +310,7 @@ $(document).ready(function () {
     InPlaceEditor.showToolbar = function() {
         var toolbarSrc = '<div id="toolbar" class="ui-widget-header ui-corner-all editorControls">' +
             //'<button id="image">Image</button>' +
+            '<button data-value="p" data-tag="regular">Regular</button>'+
             '<button data-tag="bold"><b>Bold</b></button>'+
             '<button data-tag="italic"><em>Italic</em></button>'+
             '<button data-tag="underline"><ins>Underline</ins></button>'+
@@ -339,6 +341,17 @@ $(document).ready(function () {
                 case 'insertImage':
                     var src = prompt('Please specify the link of the image.');
                     if(src) document.execCommand('insertImage', false, src);
+                    break;
+                case 'regular':
+                    var parent = $($('[contenteditable]')[0]).parent();
+                    var node = $('[contenteditable]')[0];
+//                    var html = $($('[contenteditable]')[0]).html();
+
+                    $(node).replaceWith(function(){
+                        return $("<p />", {html: $(this).html()});
+                    });
+
+//                    document.execCommand('formatBlock', false, $(this).attr('data-value'));
                     break;
                 case 'heading':
                     try {
@@ -393,6 +406,10 @@ $(document).ready(function () {
         $("script[src*='ga.js']").remove();
         $("script#facebook-jssdk").remove();
         $("style:contains('.fb_')").remove();
+	//addthis
+	$('.addthis_toolbox a').each(function () {
+		$(this).children().remove();
+	});
     }
 
     var getEntireHtml = function () {
