@@ -164,16 +164,29 @@ $(document).ready(function () {
             //set curret at end of contentEditable (FIX problem with cursor it beyond the pretty print area)
         fixCursorPosition();
         if (typeof window.getSelection != "undefined") {
-                sel = window.getSelection();
-                if (sel.getRangeAt && sel.rangeCount) {
-                    range = sel.getRangeAt(0);
-                    range.deleteContents();
-                    br = document.createTextNode("\n");
+//                sel = window.getSelection();
+                if (window.getSelection && window.getSelection.rangeCount) {
+//                    range = sel.getRangeAt(0);
+//                    range.deleteContents();
+//                    br = document.createTextNode("br");
+//                    range.insertNode(br);
+//                    range.setEndAfter(br);
+//                    range.setStartAfter(br);
+//                    sel.removeAllRanges();
+//                    sel.addRange(range);
+                    var selection = window.getSelection(),
+                        range = selection.getRangeAt(0),
+                        br = document.createElement("br"),
+                        textNode = document.createTextNode("\u00a0"); //Passing " " directly will not end up being shown correctly
+                    range.deleteContents();//required or not?
                     range.insertNode(br);
-                    range.setEndAfter(br);
-                    range.setStartAfter(br);
-                    sel.removeAllRanges();
-                    sel.addRange(range);
+                    range.collapse(false);
+                    range.insertNode(textNode);
+                    range.selectNodeContents(textNode);
+
+                    selection.removeAllRanges();
+                    selection.addRange(range);
+
                     addedBr = true;
                 }
             } else if (typeof document.selection != "undefined") {
