@@ -59,7 +59,7 @@ Node.js instructions
 
 `node server.js`
 
-**navigate to `http://localhost:3000`**
+**navigate to `http://localhost:3000/login` and login with admin/secret**
 
 *You can edit the entire HTML page now!*
 
