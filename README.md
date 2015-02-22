@@ -25,7 +25,7 @@ An article (in russian) can be [found here](http://habrahabr.ru/post/167647/ "Ar
 `rm -rf inplaceeditor`
 
 
-**add inplaceeditor to index.html template before `</body>`**
+**add inplaceeditor to index.html template after jquery.min.js **
 
 `<script src="js/inplaceeditor.js"></script>`
 
