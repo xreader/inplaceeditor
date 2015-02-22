@@ -97,12 +97,12 @@ app.get('/js/inplaceeditor.js', function (req, res) {
 app.post('/login',
   passport.authenticate('local', { failureRedirect: '/login', failureFlash: true }),
   function(req, res) {
-    res.redirect('/demo.html');
+    res.redirect('/index.html');
 });
 
 app.get('/logout', function(req, res){
   req.logout();
-  res.redirect('/demo.html');
+  res.redirect('/index.html');
 });
 
 app.get('/isloggedin', function(req, res){

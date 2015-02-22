@@ -290,7 +290,7 @@ $(document).ready(function () {
         var controlsCss = ' style=" bottom: 16px; position: fixed; right: 16px; "';
         //$('body').append('<div class="editorControls" ' + controlsCss + '><button id="saveBtn" class="btn" >Save</button><button id="actionCopy" class="btn" >Copy</button> <button id="makeDirectory" class="btn" >New Folder</button><button id="actionNew" class="btn">New</button><button id="actionEditDetails" class="btn">Page editor</button></div></div>');
 	$('body').append('<div class="editorControls"' + controlsCss + '><div class="btn-group dropup"> <button class="btn primary"><i class="icon-cogs"></i> Settings</a> </button> <button class="btn primary dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button> <ul class="dropdown-menu pull-right"> <li><a id="saveBtn" >Save</></li> <!--li><a id="actionCopy" >Copy</a></li> <li><a id="makeDirectory">New folder</a></li><li><a id="actionNew">New</a></li--> <li class="divider"></li> <li><a id="actionEditDetails">Page editor</a></li><li class="divider"></li> <li><a href="' + logoutPath + '">Logout</a></li> </ul> </div></div>');
-        controlsCss = ' style=" bottom: 20px; float: right; position: fixed; right: 18px; "';
+        controlsCss = ' style=" top: 86px; float: right; position: fixed; right: 50px; "';
         //$('body').append('<div class="editorControls" ' + controlsCss + '><a href="' + logoutPath + '">Logout</div>');
         $('#saveBtn').click(function () {
             console.log("do save...");
@@ -401,7 +401,7 @@ $(document).ready(function () {
                     InPlaceEditor.startEditing();
                 } else {
                	    $('.editorControls').remove();
-                    var controlsCss = ' style=" bottom: 20px; float: right; position: fixed; right: 18px; "';
+                    var controlsCss = ' style=" top: 86px; float: right; position: fixed; right: 50px; "';
                     $('body').append('<div class="editorControls" ' + controlsCss + '><a href="' + loginPath + '">Admin</div>');
                     highlighting = false;
                 }
